@@ -3,7 +3,7 @@
     <div class="login_box">
       <!--头像区-->
       <div class="avatar_box">
-        <img src="../assets/img/vuelogo.png" alt=""/>
+        <img src="../assets/img/logo.png" alt=""/>
       </div>
       <!--登陆表单区-->
       <el-form label-width="0px" class="login_form">
