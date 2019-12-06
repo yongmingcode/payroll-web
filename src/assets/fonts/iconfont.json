@@ -1,0 +1,23 @@
+{
+  "id": "1550300",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "129236",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e89f",
+      "unicode_decimal": 59551
+    },
+    {
+      "icon_id": "9512589",
+      "name": "锁",
+      "font_class": "lock-fill",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    }
+  ]
+}
