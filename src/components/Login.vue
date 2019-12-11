@@ -60,7 +60,7 @@ export default {
         if (!valid) {
           return
         }
-        const result = await this.$http.post('login', qs.stringify({
+        const result = await this.$http.post('yl/manager/login', qs.stringify({
           account: this.loginForm.account,
           password: this.loginForm.password
         }))
