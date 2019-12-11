@@ -12,8 +12,13 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
-axios.defaults.baseUrl = ''
-Vue.prototype.$http = axios
+var instance = axios.create({
+  baseURL: 'http://47.93.244.206/luo/setting/member/',
+  timeout: 1000,
+  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+})
+
+Vue.prototype.$http = instance
 
 Vue.config.productionTip = false
 
