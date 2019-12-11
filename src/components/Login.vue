@@ -8,8 +8,8 @@
       <!--登陆表单区-->
       <el-form ref="loginFormRef" :rules="loginFormRules" :model="loginForm" label-width="0px" class="login_form">
         <!--用户名-->
-        <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+        <el-form-item prop="account">
+          <el-input v-model="loginForm.account" prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <!--密码-->
         <el-form-item prop="password">
@@ -25,24 +25,26 @@
   </div>
 </template>
 
+
 <script>
+import qs from 'qs';
 export default {
   data () {
     return {
       // 这是登陆表单得数据绑定
       loginForm: {
-        username: 'zhangsan',
-        password: '123'
+        account: 'admin',
+        password: 'admin'
       },
       // 这是表单验证规则对象
       loginFormRules: {
         // 验证用户名是否合法
-        username: [{required: true, message: '请输入登陆名称', trigger: 'blur'},
+        account: [{required: true, message: '请输入登陆名称', trigger: 'blur'},
           {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
         ],
         // 验证密码是否合法
         password: [{required: true, message: '请输入登陆名称', trigger: 'blur'},
-          {min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}
+          {min: 3, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}
         ]
       }
     }
@@ -58,7 +60,10 @@ export default {
         if (!valid) {
           return
         }
-        const result = await this.$http.post('login', this.loginForm)
+        const result = await this.$http.post('login', qs.stringify({
+          account: this.loginForm.account,
+          password: this.loginForm.password
+        }))
         console.log(result)
       })
     }

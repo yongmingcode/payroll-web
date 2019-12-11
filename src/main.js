@@ -13,9 +13,12 @@ import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
 var instance = axios.create({
-  baseURL: 'http://47.93.244.206/luo/setting/member/',
+  // baseURL: 'http://47.93.244.206/yl/manager/',
+  baseURL: 'http://127.0.0.1:8089/yl/manager/',
   timeout: 1000,
-  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
 })
 
 Vue.prototype.$http = instance
