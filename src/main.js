@@ -20,7 +20,12 @@ var instance = axios.create({
     'Content-Type': 'application/x-www-form-urlencoded'
   }
 })
-
+instance.interceptors.request.use(config => {
+  // console.log(config)
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  // 在最后必须 return config
+  return config
+})
 Vue.prototype.$http = instance
 
 Vue.config.productionTip = false
