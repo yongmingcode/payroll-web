@@ -1,20 +1,42 @@
 <template>
-    <div>
+  <el-container class="home-container">
+    <!--头部区-->
+    <el-header>Header
       <el-button type="info" @click="logout">退出</el-button>
-    </div>
+    </el-header>
+
+    <!--页面主体区-->
+    <el-container>
+      <!--侧边栏-->
+      <el-aside width="200px">Aside</el-aside>
+      <!--右侧内容主体-->
+      <el-main>Main</el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
-export default {
-  methods: {
-    logout () {
-      window.sessionStorage.clear()
-      this.$router.push('/login')
+  export default {
+    methods: {
+      logout() {
+        window.sessionStorage.clear()
+        this.$router.push('/login')
+      }
     }
   }
-}
 </script>
 
 <style lang="less" scoped>
-
+.home-container{
+  height: 100%;
+}
+.el-header{
+  background-color: #373D41;
+}
+.el-aside{
+  background-color: #333744;
+}
+.el-main{
+  background-color: #EAEDF1;
+}
 </style>
