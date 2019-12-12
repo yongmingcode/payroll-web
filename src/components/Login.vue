@@ -27,7 +27,7 @@
 
 
 <script>
-import qs from 'qs';
+import qs from 'qs'
 export default {
   data () {
     return {
@@ -56,15 +56,18 @@ export default {
       this.$refs.loginFormRef.resetFields()
     },
     login () {
-      this.$refs.loginFormRef.validate( async valid => {
+      this.$refs.loginFormRef.validate(async valid => {
         if (!valid) {
           return
         }
-        const result = await this.$http.post('login', qs.stringify({
+        const {data: res} = await this.$http.post('login', qs.stringify({
           account: this.loginForm.account,
           password: this.loginForm.password
         }))
-        console.log(result)
+        if (res.code !== 0) {
+          return this.$message.error('登陆失败')
+        }
+        this.$message.success('登陆成功')
       })
     }
   }
