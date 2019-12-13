@@ -10,21 +10,23 @@
     <!--页面主体区-->
     <el-container>
       <!--侧边栏-->
-      <el-aside width="200px">
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <div class="toggle-button" @click="toggleCollapse"> < > </div>
         <!--侧边栏菜单区域-->
-        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF">
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF" :unique-opened="true"
+        :collapse="isCollapse" :collapse-transition="false">
           <!--一级菜单-->
           <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
             <!--一级菜单的模板区-->
             <template slot="title">
               <!--图标-->
-              <i :class="iconsObj[item.id]"></i>
+              <i :class="item.icon"></i>
               <!--文本-->
               <span>{{item.name}}</span>
             </template>
 
             <!--二级菜单-->
-            <el-menu-item :index="subItem.id" v-for="subItem in item.childrenMenu" :key="subItem.id"><!--图标-->
+            <el-menu-item :index="subItem.id + ''" v-for="subItem in item.childrenMenu" :key="subItem.id"><!--图标-->
               <i class="el-icon-menu"></i>
               <!--文本-->
               <span>{{subItem.name}}</span></el-menu-item>
@@ -46,7 +48,9 @@
         iconsObj: {
           '1': 'iconfont icon-user',
           '2': 'iconfont icon-lock-fill'
-        }
+        },
+        // 是否折叠左侧菜单
+        isCollapse: false
       }
     },
     created() {
@@ -63,6 +67,10 @@
         if (res.code !== 0) return this.$message.error(res.code.msg)
         this.menulist = res.data
         console.log(this.menulist)
+      },
+      // 点击按钮，切换菜单的折叠与展开
+      toggleCollapse() {
+        this.isCollapse = !this.isCollapse
       }
     }
   }
@@ -94,13 +102,26 @@
 
   .el-aside {
     background-color: #333744;
+    .el-menu {
+      border-right: solid 0px
+    }
   }
 
   .el-main {
     background-color: #EAEDF1;
   }
 
-.iconfont {
-  margin-right: 10px;
-}
+  .iconfont {
+    margin-right: 10px;
+  }
+
+  .toggle-button{
+    background-color: #4A5064;
+    font-size: 20px;
+    line-height: 24px;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+  }
 </style>
