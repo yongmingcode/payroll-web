@@ -58,7 +58,7 @@
       login() {
         this.$refs.loginFormRef.validate(async valid => {
           if (!valid) return
-          const {data: res} = await this.$http.post('login', qs.stringify({
+          const {data: res} = await this.$http.post('yl/manager/login', qs.stringify({
             account: this.loginForm.account,
             password: this.loginForm.password
           }))

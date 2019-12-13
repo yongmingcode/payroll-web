@@ -13,7 +13,7 @@ import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
 var instance = axios.create({
-  baseURL: 'http://47.93.244.206/yl/manager/',
+  baseURL: 'http://47.93.244.206/',
   // baseURL: 'http://127.0.0.1:8089/yl/manager/',
   timeout: 10000,
   headers: {

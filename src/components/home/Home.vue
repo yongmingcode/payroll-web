@@ -12,21 +12,22 @@
       <!--侧边栏-->
       <el-aside width="200px">
         <!--侧边栏菜单区域-->
-        <el-menu background-color="#333744" text-color="#fff" active-text-color="#ffd04b">
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF">
           <!--一级菜单-->
-          <el-submenu index="1">
+          <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
             <!--一级菜单的模板区-->
             <template slot="title">
               <!--图标-->
-              <i class="el-icon-location"></i>
+              <i :class="iconsObj[item.id]"></i>
               <!--文本-->
-              <span>导航一</span>
+              <span>{{item.name}}</span>
             </template>
+
             <!--二级菜单-->
-            <el-menu-item index="1-4-1"><!--图标-->
-              <i class="el-icon-location"></i>
+            <el-menu-item :index="subItem.id" v-for="subItem in item.childrenMenu" :key="subItem.id"><!--图标-->
+              <i class="el-icon-menu"></i>
               <!--文本-->
-              <span>导航一</span></el-menu-item>
+              <span>{{subItem.name}}</span></el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -38,39 +39,68 @@
 
 <script>
   export default {
+    data() {
+      return {
+        // 左侧菜单数据
+        menulist: [],
+        iconsObj: {
+          '1': 'iconfont icon-user',
+          '2': 'iconfont icon-lock-fill'
+        }
+      }
+    },
+    created() {
+      this.getMenuList()
+    },
     methods: {
       logout() {
         window.sessionStorage.clear()
         this.$router.push('/login')
+      },
+      // 获得所有的菜单
+      async getMenuList() {
+        const {data: res} = await this.$http.get('/yl/menu/getmenulist')
+        if (res.code !== 0) return this.$message.error(res.code.msg)
+        this.menulist = res.data
+        console.log(this.menulist)
       }
     }
   }
 </script>
 
 <style lang="less" scoped>
-.home-container{
-  height: 100%;
-}
-.el-header{
-  background-color: #373D41;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 0;
-  align-items: center;
-  color: #fff;
-  font-size: 20px;
-  > div {
+  .home-container {
+    height: 100%;
+  }
+
+  .el-header {
+    background-color: #373D41;
     display: flex;
+    justify-content: space-between;
+    padding-left: 0;
     align-items: center;
-    span{
-      margin-left: 15px;
+    color: #fff;
+    font-size: 20px;
+
+    > div {
+      display: flex;
+      align-items: center;
+
+      span {
+        margin-left: 15px;
+      }
     }
   }
-}
-.el-aside{
-  background-color: #333744;
-}
-.el-main{
-  background-color: #EAEDF1;
+
+  .el-aside {
+    background-color: #333744;
+  }
+
+  .el-main {
+    background-color: #EAEDF1;
+  }
+
+.iconfont {
+  margin-right: 10px;
 }
 </style>
