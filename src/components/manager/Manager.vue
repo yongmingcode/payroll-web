@@ -20,6 +20,46 @@
           <el-button type="primary">添加管理员</el-button>
         </el-col>
       </el-row>
+
+      <!--用户列表区域-->
+      <el-table :data="managerList" border stripe>
+        <el-table-column label="#" type="index"></el-table-column>
+        <el-table-column label="管理员ID" prop="id"></el-table-column>
+        <el-table-column label="名称" prop="username"></el-table-column>
+        <el-table-column label="账号" prop="account"></el-table-column>
+        <el-table-column label="状态" prop="state"></el-table-column>
+        <el-table-column label="备注" prop="remark"></el-table-column>
+        <el-table-column label="上次登陆时间" prop="updateTime"></el-table-column>
+        <el-table-column label="创建时间" prop="createTime"></el-table-column>
+        <el-table-column label="状态" prop="state">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.state === 1 ? true : false" active-color="#13ce66" inactive-color="#ff4949"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="185px">
+          <template slot-scope="scope">
+            <!--修改按钮-->
+            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+            <!--删除按钮-->
+            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <!--分配角色按钮-->
+            <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!--分页区域-->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pageId"
+        :page-sizes="[1, 2, 4, 6]"
+        :page-size="queryInfo.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -30,9 +70,9 @@
       return {
         // 获取用户列表的参数对象
         queryInfo: {
-          query: '',
-          pageNum: 1,
-          pagesize: 2
+          // query: '',
+          pageId: 1,
+          pageSize: 1
         },
         managerList: [],
         total: 0
@@ -43,13 +83,24 @@
     },
     methods: {
       async getManagerList() {
-        const {data: res} = await this.$http.get('yl/manager/getManagerList', {
+        const {data: res} = await this.$http.get('yl/manager/getmalagerlist', {
           params: this.queryInfo
         })
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
-        this.managerList = res.data.managerList
-        this.total = res.data.total
-        console.log(res)
+        this.managerList = res.data.data
+        this.total = res.data.totalCount
+        console.log(this.managerList)
+        console.log(this.total)
+      },
+      // 监听 pagesize 改变的事件
+      handleSizeChange(newSize) {
+        this.queryInfo.pageSize = newSize
+        this.getManagerList()
+      },
+      // 监听 页码值 改变
+      handleCurrentChange(newPage) {
+        this.queryInfo.pageId = newPage
+        this.getManagerList()
       }
     }
   }
