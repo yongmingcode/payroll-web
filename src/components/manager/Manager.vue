@@ -17,7 +17,7 @@
           </el-input>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary">添加管理员</el-button>
+          <el-button type="primary" @click="addDialogVisible = true">添加管理员</el-button>
         </el-col>
       </el-row>
 
@@ -27,13 +27,18 @@
         <el-table-column label="管理员ID" prop="id"></el-table-column>
         <el-table-column label="名称" prop="username"></el-table-column>
         <el-table-column label="账号" prop="account"></el-table-column>
-        <el-table-column label="状态" prop="state"></el-table-column>
         <el-table-column label="备注" prop="remark"></el-table-column>
         <el-table-column label="上次登陆时间" prop="updateTime"></el-table-column>
         <el-table-column label="创建时间" prop="createTime"></el-table-column>
         <el-table-column label="状态" prop="state">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.state === 1 ? true : false" active-color="#13ce66" inactive-color="#ff4949"/>
+            <el-switch
+              v-model='scope.row.state'
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              :active-value="1"
+              :inactive-value="0" @change="managerStateChanged(scope.row)">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="185px">
@@ -60,11 +65,46 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
+
+      <!--添加用户消息-->
+      <el-dialog
+          title="添加用户"
+          :visible.sync="addDialogVisible"
+          width="50%">
+          <!--内容主题区-->
+          <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+            <el-form-item label="账号" prop="account" label-width="100px">
+              <el-input v-model="addForm.account"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password" label-width="100px">
+              <el-input v-model="addForm.password"></el-input>
+            </el-form-item>
+            <el-form-item label="再次输入密码" prop="verifyPassword" label-width="100px">
+              <el-input v-model="addForm.verifyPassword"></el-input>
+            </el-form-item>
+            <el-form-item label="用户名" prop="username" label-width="100px">
+              <el-input v-model="addForm.username"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark" label-width="100px">
+              <el-input v-model="addForm.remark"></el-input>
+            </el-form-item>
+            <el-form-item label="状态(1-有效，0-无效)" prop="state" label-width="100px">
+              <el-input v-model="addForm.state"></el-input>
+            </el-form-item>
+          </el-form>
+          <!--底部区域-->
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+          </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
+  import qs from 'qs'
+
   export default {
     data() {
       return {
@@ -75,7 +115,45 @@
           pageSize: 1
         },
         managerList: [],
-        total: 0
+        total: 0,
+        // 控制添加管理员对话框的显示与隐藏
+        addDialogVisible: false,
+        // 添加用户的表单数据
+        addForm: {
+          account: '',
+          password: '',
+          verifyPassword: '',
+          username: '',
+          remark: '',
+          state: ''
+        },
+        // 添加表单的验证规则对象
+        addFormRules: {
+          account: [
+            {required: true, message: '请输入账号', trigger: 'blur'},
+            {min: 3, max: 15, message: '账号的长度在3~15个字符之间', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 3, max: 10, message: '密码的长度在3~10个字符之间', trigger: 'blur'}
+          ],
+          verifyPassword: [
+            {required: true, message: '请再次输入密码', trigger: 'blur'},
+            {min: 3, max: 10, message: '密码的长度在3~10个字符之间', trigger: 'blur'}
+          ],
+          username: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {min: 3, max: 15, message: '用户名的长度在3~10个字符之间', trigger: 'blur'}
+          ],
+          remark: [
+            {required: true, message: '请输入备注', trigger: 'blur'},
+            {min: 3, max: 25, message: '用户名的长度在3~25个字符之间', trigger: 'blur'}
+          ],
+          state: [
+            {required: true, message: '请输入状态', trigger: 'blur'},
+            {min: 1, max: 1, message: '状态必须是1，或者0', trigger: 'blur'}
+          ]
+        }
       }
     },
     created() {
@@ -89,8 +167,6 @@
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
         this.managerList = res.data.data
         this.total = res.data.totalCount
-        console.log(this.managerList)
-        console.log(this.total)
       },
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {
@@ -101,6 +177,17 @@
       handleCurrentChange(newPage) {
         this.queryInfo.pageId = newPage
         this.getManagerList()
+      },
+      async managerStateChanged(managerInfo) {
+        const {data: res} = await this.$http.post('yl/manager/updatemanagersate', qs.stringify({
+          id: managerInfo.id,
+          state: managerInfo.state
+        }))
+        if (res.code !== 0) {
+          managerInfo.state = !managerInfo.state
+          return this.$message.error('更新状态失败！')
+        }
+        this.$message.success('更新状态成功！')
       }
     }
   }
