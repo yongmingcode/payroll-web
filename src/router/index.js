@@ -4,6 +4,7 @@ import Login from '../components/Login.vue'
 import Home from '../components/home/Home.vue'
 import Welcome from '../components/home/welcome/Welcome.vue'
 import Manager from '../components/manager/Manager.vue'
+import Calender from '../components/calender/Calender.vue'
 
 Vue.use(Router)
 
@@ -17,7 +18,8 @@ const router = new Router({
       redirect: '/welcome',
       children: [
         {path: '/welcome', component: Welcome},
-        {path: '/manager', component: Manager}
+        {path: '/manager', component: Manager},
+        {path: '/calendar', component: Calender}
         ]
     }
   ]
