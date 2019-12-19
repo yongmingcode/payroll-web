@@ -28,8 +28,8 @@
         <el-table-column label="名称" prop="username"></el-table-column>
         <el-table-column label="账号" prop="account"></el-table-column>
         <el-table-column label="备注" prop="remark"></el-table-column>
-        <el-table-column label="上次登陆时间" prop="updateTime"></el-table-column>
-        <el-table-column label="创建时间" prop="createTime"></el-table-column>
+        <el-table-column label="上次登陆时间" :formatter="dateFormat" prop="updateTime"></el-table-column>
+        <el-table-column label="创建时间" :formatter="dateFormat" prop="createTime"></el-table-column>
         <el-table-column label="状态" prop="state">
           <template slot-scope="scope">
             <el-switch
@@ -68,32 +68,32 @@
 
       <!--添加用户消息-->
       <el-dialog
-          title="添加用户"
-          :visible.sync="addDialogVisible"
-          width="50%">
-          <!--内容主题区-->
-          <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
-            <el-form-item label="账号" prop="account" label-width="100px">
-              <el-input v-model="addForm.account"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="password" label-width="100px">
-              <el-input v-model="addForm.password"></el-input>
-            </el-form-item>
-            <el-form-item label="再次输入密码" prop="verifyPassword" label-width="100px">
-              <el-input v-model="addForm.verifyPassword"></el-input>
-            </el-form-item>
-            <el-form-item label="用户名" prop="username" label-width="100px">
-              <el-input v-model="addForm.username"></el-input>
-            </el-form-item>
-            <el-form-item label="备注" prop="remark" label-width="100px">
-              <el-input v-model="addForm.remark"></el-input>
-            </el-form-item>
-            <el-form-item label="状态(1-有效，0-无效)" prop="state" label-width="100px">
-              <el-input v-model="addForm.state"></el-input>
-            </el-form-item>
-          </el-form>
-          <!--底部区域-->
-          <span slot="footer" class="dialog-footer">
+        title="添加用户"
+        :visible.sync="addDialogVisible"
+        width="50%">
+        <!--内容主题区-->
+        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+          <el-form-item label="账号" prop="account" label-width="100px">
+            <el-input v-model="addForm.account"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password" label-width="100px">
+            <el-input v-model="addForm.password"></el-input>
+          </el-form-item>
+          <el-form-item label="再次输入密码" prop="verifyPassword" label-width="100px">
+            <el-input v-model="addForm.verifyPassword"></el-input>
+          </el-form-item>
+          <el-form-item label="用户名" prop="username" label-width="100px">
+            <el-input v-model="addForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark" label-width="100px">
+            <el-input v-model="addForm.remark"></el-input>
+          </el-form-item>
+          <el-form-item label="状态(1-有效，0-无效)" prop="state" label-width="100px">
+            <el-input v-model="addForm.state"></el-input>
+          </el-form-item>
+        </el-form>
+        <!--底部区域-->
+        <span slot="footer" class="dialog-footer">
             <el-button @click="addDialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
           </span>
@@ -188,6 +188,14 @@
           return this.$message.error('更新状态失败！')
         }
         this.$message.success('更新状态成功！')
+      },
+      // 时间格式化
+      dateFormat: function (row, column) {
+        var date = row[column.property]
+        if (date === undefined) {
+          return ''
+        }
+        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       }
     }
   }

@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import './plugins/element.js'
 import 'element-ui/lib/theme-chalk/index.css'
+import moment from 'moment'
 
 // 导入全局样式
 import './assets/css/global.css'
@@ -12,6 +13,8 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
+
+Vue.prototype.$moment = moment
 var instance = axios.create({
   baseURL: 'http://47.93.244.206/',
   // baseURL: 'http://127.0.0.1:8089/yl/manager/',

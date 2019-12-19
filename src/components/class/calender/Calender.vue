@@ -38,13 +38,13 @@
 
 <script>
   export default {
-    data(){
+    data() {
       return {
         calendarData: [
-          { months: ['09', '11'],days: ['15'],things: '看电影' },
-          { months: ['10', '11'], days: ['02'],things: '去公园野炊' },
-          { months: ['11'], days: ['02'],things: '看星星' },
-          { months: ['11'], days: ['02'],things: '看月亮' }
+          {months: ['09', '11'], days: ['15'], things: '看电影'},
+          {months: ['10', '11'], days: ['02'], things: '去公园野炊'},
+          {months: ['11'], days: ['02'], things: '看星星'},
+          {months: ['11'], days: ['02'], things: '看月亮'}
         ],
         value: new Date()
       }
@@ -53,18 +53,20 @@
 </script>
 
 <style lang="less" scoped>
-  .calendar-day{
+  .calendar-day {
     text-align: center;
     color: #202535;
     line-height: 30px;
     font-size: 12px;
   }
-  .is-selected{
+
+  .is-selected {
     color: #F8A535;
     font-size: 10px;
     margin-top: 5px;
   }
-  #calendar .el-button-group>.el-button:not(:first-child):not(:last-child):after{
+
+  #calendar .el-button-group > .el-button:not(:first-child):not(:last-child):after {
     content: '当月';
   }
 </style>

@@ -4,7 +4,8 @@ import Login from '../components/Login.vue'
 import Home from '../components/home/Home.vue'
 import Welcome from '../components/home/welcome/Welcome.vue'
 import Manager from '../components/manager/Manager.vue'
-import Calender from '../components/calender/Calender.vue'
+import Calender from '../components/class/calender/Calender.vue'
+import ClassRecordList from '../components/class/class_record_list/ClassRecordList.vue'
 
 Vue.use(Router)
 
@@ -19,7 +20,8 @@ const router = new Router({
       children: [
         {path: '/welcome', component: Welcome},
         {path: '/manager', component: Manager},
-        {path: '/calendar', component: Calender}
+        {path: '/calendar', component: Calender},
+        {path: '/class_record_list', component: ClassRecordList}
         ]
     }
   ]
