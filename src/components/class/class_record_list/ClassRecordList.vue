@@ -16,7 +16,7 @@
           </el-input>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary" @click="addDialogVisible = true">添加管理员</el-button>
+          <el-button type="primary" @click="addDialogVisible = true">添加上课记录</el-button>
         </el-col>
       </el-row>
 
@@ -57,33 +57,33 @@
       </el-pagination>
 
       <!--添加上课记录-->
-      <el-dialog
-        title="添加上课记录" :visible.sync="addDialogVisible" width="50%">
+      <el-dialog title="添加上课记录" :visible.sync="addDialogVisible" width="40%">
         <!--内容主题区-->
         <el-form :model="addForm" label-width="70px">
-          <el-form-item label="上课地点ID" prop="locationId" label-width="100px">
-            <el-input v-model="addForm.locationId"></el-input>
+          <el-form-item label="上课地点" prop="locationId" label-width="100px" >
+            <el-select v-model="addForm.locationId" placeholder="请选择">
+              <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="课堂名称" prop="className" label-width="100px">
             <el-input v-model="addForm.className"></el-input>
           </el-form-item>
-          <el-form-item label="课堂类型ID" prop="classTypeId" label-width="100px">
-            <el-input v-model="addForm.classTypeId"></el-input>
+          <el-form-item label="课堂类型" prop="classTypeId" label-width="100px">
+            <el-select v-model="addForm.classTypeId" placeholder="请选择">
+              <el-option v-for="item in class_type" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="课时" prop="classPeriod" label-width="100px">
             <el-input v-model="addForm.classPeriod"></el-input>
           </el-form-item>
           <el-form-item label="上课具体时间" prop="classTime" label-width="100px">
-            <el-input v-model="addForm.classTime"></el-input>
+            <el-date-picker v-model="addForm.classTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
           <el-form-item label="时长" prop="duration" label-width="100px">
             <el-input v-model="addForm.duration" placeholder="单位：分钟"></el-input>
           </el-form-item>
-          <el-form-item label="课堂备注" prop="content" label-width="100px">
+          <el-form-item label="课堂备注" prop="content" label-width="100px" >
             <el-input v-model="addForm.content"></el-input>
-          </el-form-item>
-          <el-form-item label="创建时间" prop="createTime" label-width="100px">
-            <el-input v-model="addForm.createTime"></el-input>
           </el-form-item>
         </el-form>
         <!--底部区域-->
@@ -120,9 +120,16 @@
           classPeriod: '',
           classTime: '',
           duration: '',
-          content: '',
-          createTime: ''
-        }
+          content: ''
+        },
+        class_location: [
+          {value: '1', label: '望京'},
+          {value: '2', label: '其它'}
+        ],
+        class_type: [
+          {value: '1', label: '大课'},
+          {value: '2', label: '小课'}
+        ]
       }
     },
     created() {
@@ -130,7 +137,7 @@
     },
     methods: {
       async getClassRecordList() {
-        const {data: res} = await this.$http.get('yl/classrecords/getclassrecordlist',{
+        const {data: res} = await this.$http.get('yl/classrecords/getclassrecordlist', {
           params: this.queryInfo
         })
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
@@ -162,13 +169,12 @@
           className: addForm.className,
           classTypeId: addForm.classTypeId,
           classPeriod: addForm.classPeriod,
-          // classTime: addForm.classTime,
+          classTime: this.$moment(addForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
           duration: addForm.duration,
           content: addForm.content
-          // createTime: addForm.createTime
         }))
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
-        // this.addDialogVisible = false
+        this.addDialogVisible = false
         this.$message.success('更新状态成功！')
         console.log(res)
       }

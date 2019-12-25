@@ -14,11 +14,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "element-ui": "^2.13.0",
-    "vue": "^2.5.2",
-    "vue-router": "^3.0.1",
     "axios": "latest",
-    "qs": "latest"
+    "element-ui": "^2.13.0",
+    "moment": "^2.24.0",
+    "qs": "latest",
+    "vue": "^2.5.2",
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
