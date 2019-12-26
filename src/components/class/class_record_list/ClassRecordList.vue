@@ -22,16 +22,24 @@
 
       <!--课程记录列表区域-->
       <el-table :data="classRecordList" border stripe>
-        <el-table-column label="记录编号" prop="id"></el-table-column>
-        <el-table-column label="上课地点ID" prop="locationId"></el-table-column>
-        <el-table-column label="课堂名称" prop="className"></el-table-column>
-        <el-table-column label="课堂类型ID" prop="classTypeId"></el-table-column>
-        <el-table-column label="课时" prop="classPeriod"></el-table-column>
-        <el-table-column label="上课具体时间" :formatter="dateFormat" prop="classTime"></el-table-column>
-        <el-table-column label="时长（单位：分钟）" prop="duration"></el-table-column>
-        <el-table-column label="课堂备注" prop="content"></el-table-column>
-        <el-table-column label="创建时间" :formatter="dateFormat" prop="createTime"></el-table-column>
-        <el-table-column label="操作" width="185px">
+        <el-table-column label="记录编号" prop="id" align="center"></el-table-column>
+        <el-table-column label="上课地点ID" align="center">
+          <template slot-scope="scope">
+            {{scope.row.locationId == 1 ? "望京" : "其它"}}
+          </template>
+        </el-table-column>
+        <el-table-column label="课堂名称" prop="className" align="center"></el-table-column>
+        <el-table-column label="课堂类型ID" align="center">
+          <template slot-scope="scope">
+            {{scope.row.classTypeId == 1 ? "大课" : "小课"}}
+          </template>
+        </el-table-column>
+        <el-table-column label="课时" prop="classPeriod" align="center"></el-table-column>
+        <el-table-column label="上课具体时间" :formatter="dateFormat" prop="classTime" align="center"></el-table-column>
+        <el-table-column label="时长（单位：分钟）" prop="duration" align="center"></el-table-column>
+
+        <el-table-column label="创建时间" :formatter="dateFormat" prop="createTime" align="center"></el-table-column>
+        <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
             <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
@@ -143,6 +151,7 @@
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
         this.classRecordList = res.data.data
         this.total = res.data.totalCount
+        console.log(this.classRecordList)
       },
       // 时间格式化
       dateFormat: function (row, column) {
