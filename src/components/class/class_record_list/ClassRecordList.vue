@@ -180,23 +180,27 @@
         this.getClassRecordList()
       },
       // 添加上课记录
-      async addClassRecord(addForm) {
-        const {data: res} = await this.$http.post('yl/classrecords/addclassrecord', qs.stringify({
-          locationId: addForm.locationId,
-          className: addForm.className,
-          classTypeId: addForm.classTypeId,
-          classPeriod: addForm.classPeriod,
-          classTime: this.$moment(addForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
-          duration: addForm.duration,
-          content: addForm.content
-        }))
-        if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
-        this.addDialogVisible = false
-        this.$message.success('更新状态成功！')
-        console.log(res)
+      addClassRecord(addForm) {
+        this.$refs.addFormRef.validate(async valid => {
+          if (!valid) return
+          const {data: res} = await this.$http.post('yl/classrecords/addclassrecord', qs.stringify({
+            locationId: addForm.locationId,
+            className: addForm.className,
+            classTypeId: addForm.classTypeId,
+            classPeriod: addForm.classPeriod,
+            classTime: this.$moment(addForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
+            duration: addForm.duration,
+            content: addForm.content
+          }))
+          if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
+          this.addDialogVisible = false
+          this.$message.success('更新状态成功！')
+          // 重新获取课堂记录信息
+          this.getClassRecordList()
+        })
       },
       // 监听添加课堂记录对话框的关闭事件
-      addDialogClosed(){
+      addDialogClosed() {
         this.$refs.addFormRef.resetFields()
       }
     }
