@@ -11,8 +11,8 @@
     <el-card class="box-card">
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.keyword">
+            <el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>
           </el-input>
         </el-col>
         <el-col :span="2">
@@ -58,7 +58,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageId"
-        :page-sizes="[1, 2, 4, 6]"
+        :page-sizes="[2, 4, 8]"
         :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -113,6 +113,7 @@
     data() {
       return {
         queryInfo: {
+          keyword: '',
           pageId: 1,
           pageSize: 1
         },
