@@ -42,7 +42,7 @@
         <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
-            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog()"></el-button>
             <!--删除按钮-->
             <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
             <!--分配角色按钮-->
@@ -101,6 +101,18 @@
             <el-button type="primary" @click="addClassRecord(addForm)">确 定</el-button>
           </span>
       </el-dialog>
+
+      <!--修改课堂记录的对话框-->
+      <el-dialog
+        title="修改课堂记录"
+        :visible.sync="editDialogVisible"
+        width="50%">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
 
   </div>
@@ -145,7 +157,9 @@
         class_type: [
           {value: '1', label: '大课'},
           {value: '2', label: '小课'}
-        ]
+        ],
+        // 控制修改用户对话框的显示与隐藏
+        editDialogVisible: false
       }
     },
     created() {
@@ -202,6 +216,10 @@
       // 监听添加课堂记录对话框的关闭事件
       addDialogClosed() {
         this.$refs.addFormRef.resetFields()
+      },
+      // 展示编辑课堂记录的对话框
+      showEditDialog() {
+        this.editDialogVisible = true
       }
     }
   }
