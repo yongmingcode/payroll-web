@@ -11,7 +11,7 @@
     <el-card class="box-card">
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" v-model="queryInfo.keyword">
+          <el-input placeholder="请输入内容" v-model="queryInfo.keyword" clearable @clear="getClassRecordList">
             <el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>
           </el-input>
         </el-col>
@@ -67,7 +67,7 @@
       <!--添加上课记录-->
       <el-dialog title="添加上课记录" :visible.sync="addDialogVisible" width="40%">
         <!--内容主题区-->
-        <el-form :model="addForm" label-width="70px">
+        <el-form :model="addForm" label-width="70px" :rules="addFormRules">
           <el-form-item label="上课地点" prop="locationId" label-width="100px" >
             <el-select v-model="addForm.locationId" placeholder="请选择">
               <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -115,7 +115,7 @@
         queryInfo: {
           keyword: '',
           pageId: 1,
-          pageSize: 1
+          pageSize: 2
         },
         classRecordList: [],
         total: 0,
@@ -130,6 +130,12 @@
           classTime: '',
           duration: '',
           content: ''
+        },
+        addFormRules: {
+          className: [
+            {required: true, message: '请输入课堂名称', trigger: 'blur'},
+            {min: 2, max: 50, message: '课堂名称的长度在2-50个字符'}
+          ]
         },
         class_location: [
           {value: '1', label: '望京'},
