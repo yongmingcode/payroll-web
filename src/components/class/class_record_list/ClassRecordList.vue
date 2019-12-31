@@ -65,9 +65,10 @@
       </el-pagination>
 
       <!--添加上课记录-->
-      <el-dialog title="添加上课记录" :visible.sync="addDialogVisible" width="40%">
+      <el-dialog title="添加上课记录" :visible.sync="addDialogVisible" width="40%"
+       @close="addDialogClosed">
         <!--内容主题区-->
-        <el-form :model="addForm" label-width="70px" :rules="addFormRules">
+        <el-form :model="addForm" label-width="70px" :rules="addFormRules" ref="addFormRef">
           <el-form-item label="上课地点" prop="locationId" label-width="100px" >
             <el-select v-model="addForm.locationId" placeholder="请选择">
               <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -193,6 +194,10 @@
         this.addDialogVisible = false
         this.$message.success('更新状态成功！')
         console.log(res)
+      },
+      // 监听添加课堂记录对话框的关闭事件
+      addDialogClosed(){
+        this.$refs.addFormRef.resetFields()
       }
     }
   }
