@@ -9,18 +9,29 @@
 
     <!--卡片区域-->
     <el-card class="box-card">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input placeholder="请输入内容" v-model="queryInfo.keyword" clearable @clear="getClassRecordList">
-            <el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>
-          </el-input>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" @click="addDialogVisible = true">添加上课记录</el-button>
-        </el-col>
-      </el-row>
 
-      <!--课程记录列表区域-->
+      <!--搜索栏-->
+      <div class="toolbar">
+        <div class="controls">
+          <span>开始时间</span>
+          <el-date-picker type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" ></el-date-picker>
+
+          <span>结束时间</span>
+          <el-date-picker type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" ></el-date-picker>
+        </div>
+        <div class="Add ">
+          <div class="select_keyword">
+            <el-input placeholder="请输入内容" v-model="queryInfo.keyword" clearable @clear="getClassRecordList">
+              <el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>
+            </el-input>
+          </div>
+          <div class="add_button">
+            <el-button type="primary" @click="addDialogVisible = true">添加</el-button>
+          </div>
+        </div>
+      </div>
+
+      <!--列表区域-->
       <el-table :data="classRecordList" border stripe>
         <el-table-column label="记录编号" prop="id" align="center"></el-table-column>
         <el-table-column label="上课地点ID" align="center">
@@ -64,7 +75,7 @@
         :total="total">
       </el-pagination>
 
-      <!--添加上课记录-->
+      <!--添加 上课记录的对话框-->
       <el-dialog title="添加上课记录" :visible.sync="addDialogVisible" width="40%"
        @close="addDialogClosed">
         <!--内容主题区-->
@@ -102,7 +113,7 @@
           </span>
       </el-dialog>
 
-      <!--修改课堂记录的对话框-->
+      <!--修改 课堂记录的对话框-->
       <el-dialog
         title="修改课堂记录"
         :visible.sync="editDialogVisible"
@@ -226,5 +237,28 @@
 </script>
 
 <style lang="less" scoped>
-
+  .toolbar{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+    overflow: hidden;
+    background: #fff;
+    padding: 10px 20px;
+    .controls{
+      float: left;
+      height: 40px;
+    }
+    .Add {
+      float: right;
+      height: 42px;
+      .select_keyword{
+        float: left;
+        width: 200px;
+        margin-right: 5px;
+      }
+      .add_button{
+        float: right;
+      }
+    }
+  }
 </style>
