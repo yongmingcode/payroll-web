@@ -13,11 +13,19 @@
       <!--搜索栏-->
       <div class="toolbar">
         <div class="controls">
-          <span>开始时间</span>
-          <el-date-picker type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" ></el-date-picker>
+          <span style="font-size: 14px">开始时间</span>
+          <el-date-picker v-model="queryInfo.minDate" type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" @change="getClassRecordList"></el-date-picker>
 
-          <span>结束时间</span>
-          <el-date-picker type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" ></el-date-picker>
+          <span style="font-size: 14px">结束时间</span>
+          <el-date-picker v-model="queryInfo.maxDate" type="datetime"  placeholder="选择日期时间" default-time="12:00:00" align="right" @change="getClassRecordList"></el-date-picker>
+
+          <el-select v-model="queryInfo.locationId" placeholder="地点" @change="getClassRecordList">
+            <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+
+          <el-select v-model="queryInfo.classTypeId" placeholder="课堂类型" @change="getClassRecordList">
+            <el-option v-for="item in class_type" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
         </div>
         <div class="Add ">
           <div class="select_keyword">
@@ -137,7 +145,11 @@
     data() {
       return {
         queryInfo: {
+          locationId: '',
+          classTypeId: '',
           keyword: '',
+          minDate: '',
+          maxDate: '',
           pageId: 1,
           pageSize: 2
         },
@@ -162,10 +174,12 @@
           ]
         },
         class_location: [
+          {value: '-1', label: '全部'},
           {value: '1', label: '望京'},
           {value: '2', label: '其它'}
         ],
         class_type: [
+          {value: '-1', label: '全部'},
           {value: '1', label: '大课'},
           {value: '2', label: '小课'}
         ],
@@ -175,6 +189,17 @@
     },
     created() {
       this.getClassRecordList()
+      // 时间默认一周
+      var end = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
+      var start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      start.setHours(0, 0, 0, 0)
+      start = this.forDate(start)
+      end = this.forDate(end)
+      this.queryInfo.minDate = start
+      this.queryInfo.maxDate = end
+      console.log(this.queryInfo.minDate)
+      console.log(this.queryInfo.maxDate)
     },
     methods: {
       async getClassRecordList() {
@@ -231,6 +256,21 @@
       // 展示编辑课堂记录的对话框
       showEditDialog() {
         this.editDialogVisible = true
+      },
+      forDate(timestamp) {
+        var date = new Date(timestamp)
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        m = m < 10 ? '0' + m : m
+        var d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        var h = date.getHours()
+        h = h < 10 ? ('0' + h) : h
+        var mm = date.getMinutes()
+        mm = mm < 10 ? ('0' + mm) : mm
+        var ss = date.getSeconds()
+        ss = ss < 10 ? ('0' + ss) : ss
+        return y + "-" + m + "-" + d + " " + h + ":" + mm + ":" + ss
       }
     }
   }
@@ -243,10 +283,16 @@
     text-align: left;
     overflow: hidden;
     background: #fff;
-    padding: 10px 20px;
+    padding: 1px 2px;
     .controls{
       float: left;
       height: 40px;
+      .el-select{
+        width: 125px;
+      }
+      .el-date-editor.el-input, .el-date-editor.el-input__inner {
+        width: 200px;
+      }
     }
     .Add {
       float: right;
