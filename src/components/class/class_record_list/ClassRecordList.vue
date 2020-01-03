@@ -61,7 +61,7 @@
         <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog()"></el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
             <!--删除按钮-->
             <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
             <!--分配角色按钮-->
@@ -122,14 +122,38 @@
       </el-dialog>
 
       <!--修改 课堂记录的对话框-->
-      <el-dialog
-        title="修改课堂记录"
-        :visible.sync="editDialogVisible"
-        width="50%">
-        <span>这是一段信息</span>
+      <el-dialog title="修改课堂记录" :visible.sync="editDialogVisible" width="40%"
+      @close="editDialogClosed">
+        <el-form ref="editFormRef" :model="editForm"  label-width="70px" :rules="editFormRules">
+          <el-form-item label="上课地点" prop="locationId" label-width="100px" >
+            <el-select v-model="editForm.locationId" placeholder="请选择">
+              <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="课堂名称" prop="className" label-width="100px">
+            <el-input v-model="editForm.className"></el-input>
+          </el-form-item>
+          <el-form-item label="课堂类型" prop="classTypeId" label-width="100px">
+            <el-select v-model="editForm.classTypeId" placeholder="请选择">
+              <el-option v-for="item in class_type" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="课时" prop="classPeriod" label-width="100px">
+            <el-input v-model="editForm.classPeriod"></el-input>
+          </el-form-item>
+          <el-form-item label="上课具体时间" prop="classTime" label-width="100px">
+            <el-date-picker v-model="editForm.classTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="时长" prop="duration" label-width="100px">
+            <el-input v-model="editForm.duration" placeholder="单位：分钟"></el-input>
+          </el-form-item>
+          <el-form-item label="课堂备注" prop="content" label-width="100px" >
+            <el-input v-model="editForm.content"></el-input>
+          </el-form-item>
+        </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="editClassRecordInfo">确 定</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -174,17 +198,26 @@
           ]
         },
         class_location: [
-          {value: '-1', label: '全部'},
-          {value: '1', label: '望京'},
-          {value: '2', label: '其它'}
+          {value: -1, label: '全部'},
+          {value: 1, label: '望京'},
+          {value: 2, label: '其它'}
         ],
         class_type: [
-          {value: '-1', label: '全部'},
-          {value: '1', label: '大课'},
-          {value: '2', label: '小课'}
+          {value: -1, label: '全部'},
+          {value: 1, label: '大课'},
+          {value: 2, label: '小课'}
         ],
         // 控制修改用户对话框的显示与隐藏
-        editDialogVisible: false
+        editDialogVisible: false,
+        // 查询到的课堂记录信息对象
+        editForm: {},
+        // 修改表单的验证规则对象
+        editFormRules: {
+          className: [
+            {required: true, message: '请输入课堂名称', trigger: 'blur'},
+            {min: 2, max: 50, message: '课堂名称的长度在2-50个字符'}
+          ]
+        }
       }
     },
     created() {
@@ -242,7 +275,7 @@
             duration: addForm.duration,
             content: addForm.content
           }))
-          if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
+          if (res.code !== 0) return this.$message.error('获取课堂记录信息失败！')
           this.addDialogVisible = false
           this.$message.success('更新状态成功！')
           // 重新获取课堂记录信息
@@ -254,8 +287,41 @@
         this.$refs.addFormRef.resetFields()
       },
       // 展示编辑课堂记录的对话框
-      showEditDialog() {
+      async showEditDialog(id) {
+        const {data: res} = await this.$http.post('yl/classrecords/getclassrecord', qs.stringify({
+          id: id
+        }))
+        if (res.code !== 0) return this.$message.error('查询课堂记录信息失败！')
+        this.editForm = res.data
+        console.log(this.editForm)
         this.editDialogVisible = true
+      },
+      // 监听修改用户对话框的关闭时间
+      editDialogClosed() {
+        // resetFields()重置表单的函数
+        this.$refs.editFormRef.resetFields()
+      },
+      // 修改课堂记录信息并提交
+      editClassRecordInfo() {
+        // 预校验
+        this.$refs.editFormRef.validate(async valid => {
+          if (!valid) return
+          // 发起修改用户信息的数据请求
+          const {data: res} = await this.$http.post('yl/classrecords/updateclassrecord', qs.stringify({
+            locationId: this.editForm.locationId,
+            className: this.editForm.className,
+            classTypeId: this.editForm.classTypeId,
+            classPeriod: this.editForm.classPeriod,
+            classTime: this.$moment(this.editForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
+            duration: this.editForm.duration,
+            content: this.editForm.content,
+            id: this.editForm.id
+          }))
+          if (res.code !== 0) return this.$message.error('修改课堂记录信息失败！')
+          this.editDialogVisible = false
+          this.getClassRecordList()
+          this.$message.success('修改成功！')
+        })
       },
       forDate(timestamp) {
         var date = new Date(timestamp)
