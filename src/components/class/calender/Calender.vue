@@ -14,8 +14,16 @@
         <template slot="dateCell" slot-scope="{date, data}">
           <div> {{data.day.split('-').slice(2).join('-')}} </div>
           <!--自定义内容-->
-          <div>
-            test
+          <div class="calendar-day">
+            <div v-for="item in calendarData">
+              <div v-if="item.year == parseInt(data.day.split('-')[0])">
+                <div v-if="item.month == parseInt(data.day.split('-')[1])">
+                  <div v-if="item.day == parseInt(data.day.split('-')[2])">
+                    {{item.location}} : {{item.time}}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!--<div>-->
             <!--<div class="calendar-day">{{ data.day.split('-').slice(2).join('-') }}</div>-->
@@ -42,25 +50,49 @@
   export default {
     data() {
       return {
-        // calendarData: [
-        //   {months: ['09', '11'], days: ['15'], things: '看电影'},
-        //   {months: ['10', '11'], days: ['02'], things: '去公园野炊去公园野炊去公园野炊去公园野炊'},
-        //   {months: ['11'], days: ['02'], things: '看星星'},
-        //   {months: ['11'], days: ['02'], things: '看月亮'}
-        // ],
-        value: new Date()
+        calendarData: [
+          // {year: '2020', month: 1, day: 3, things: '看电影'}
+          // {months: ['09', '11'], days: ['15'], things: '看电影'},
+          // {months: ['10', '11'], days: ['02'], things: '去公园野炊去公园野炊去公园野炊去公园野炊'},
+          // {months: ['11'], days: ['02'], things: '看星星'},
+          // {months: ['11'], days: ['02'], things: '看月亮'}
+        ],
+        value: new Date(),
+        queryInfo: {
+          locationId: '',
+          classTypeId: '',
+          keyword: '',
+          minDate: '',
+          maxDate: '',
+          pageId: 1,
+          pageSize: 20000
+        }
+      }
+    },
+    created() {
+      this.getCalendarClassRecordList()
+    },
+    methods: {
+      async getCalendarClassRecordList() {
+        const {data: res} = await this.$http.get('yl/classrecords/getcalendarclassrecordlist')
+        if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
+        this.calendarData = res.data
+        console.log(this.calendarData)
       }
     }
   }
 </script>
 
 <style lang="less" scoped>
-  /*.calendar-day {*/
-    /*text-align: center;*/
-    /*color: #202535;*/
-    /*line-height: 30px;*/
-    /*font-size: 12px;*/
-  /*}*/
+  .el-calendar-table .el-calendar-day{
+    height: 120px
+  }
+  .calendar-day {
+    text-align: left;
+    color: #55a532;
+    line-height: 16px;
+    font-size: 15px;
+  }
 
   /*.is-selected {*/
     /*color: #F8A535;*/
