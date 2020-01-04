@@ -77,7 +77,6 @@
         const {data: res} = await this.$http.get('yl/classrecords/getcalendarclassrecordlist')
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
         this.calendarData = res.data
-        console.log(this.calendarData)
       }
     }
   }
@@ -91,7 +90,7 @@
     text-align: left;
     color: #55a532;
     line-height: 16px;
-    font-size: 15px;
+    font-size: 13px;
   }
 
   /*.is-selected {*/

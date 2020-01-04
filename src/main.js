@@ -16,8 +16,8 @@ import axios from 'axios'
 
 Vue.prototype.$moment = moment
 var instance = axios.create({
-  baseURL: 'http://47.93.244.206/',
-  // baseURL: 'http://127.0.0.1:8089/',
+  baseURL: 'http://47.93.244.206:8089/',
+  // baseURL: 'http://localhost:8089/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'

@@ -9,11 +9,11 @@
       <el-form ref="loginFormRef" :rules="loginFormRules" :model="loginForm" label-width="0px" class="login_form">
         <!--用户名-->
         <el-form-item prop="account">
-          <el-input v-model="loginForm.account" prefix-icon="iconfont icon-user"></el-input>
+          <el-input v-model="loginForm.account" prefix-icon="iconfont icon-user" placeholder="请输入用户名" ></el-input>
         </el-form-item>
         <!--密码-->
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-lock-fill" type="password"></el-input>
+          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-lock-fill" type="password" placeholder="请输入密码"  ></el-input>
         </el-form-item>
         <!--按钮-->
         <el-form-item class="btns">
@@ -33,8 +33,8 @@
       return {
         // 这是登陆表单得数据绑定
         loginForm: {
-          account: 'admin',
-          password: 'admin'
+          account: '',
+          password: ''
         },
         // 这是表单验证规则对象
         loginFormRules: {

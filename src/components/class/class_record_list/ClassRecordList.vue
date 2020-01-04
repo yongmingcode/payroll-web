@@ -231,8 +231,6 @@
       end = this.forDate(end)
       this.queryInfo.minDate = start
       this.queryInfo.maxDate = end
-      console.log(this.queryInfo.minDate)
-      console.log(this.queryInfo.maxDate)
     },
     methods: {
       async getClassRecordList() {
@@ -242,7 +240,6 @@
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
         this.classRecordList = res.data.data
         this.total = res.data.totalCount
-        console.log(this.classRecordList)
       },
       // 时间格式化
       dateFormat: function (row, column) {
