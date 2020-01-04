@@ -42,18 +42,18 @@
       <!--列表区域-->
       <el-table :data="classRecordList" border stripe>
         <el-table-column label="记录编号" prop="id" align="center"></el-table-column>
-        <el-table-column label="上课地点ID" align="center">
+        <el-table-column label="上课地点" align="center">
           <template slot-scope="scope">
             {{scope.row.locationId == 1 ? "望京" : "其它"}}
           </template>
         </el-table-column>
         <el-table-column label="课堂名称" prop="className" align="center"></el-table-column>
-        <el-table-column label="课堂类型ID" align="center">
+        <el-table-column label="课堂类型" align="center">
           <template slot-scope="scope">
-            {{scope.row.classTypeId == 1 ? "大课" : "小课"}}
+            {{scope.row.classTypeId == 1 ? "大课" : (scope.row.classTypeId == 2 ? "小课" : "其它")}}
           </template>
         </el-table-column>
-        <el-table-column label="课时" prop="classPeriod" align="center"></el-table-column>
+        <el-table-column label="课时" prop="classPeriod" align="center" style="width: 50px"></el-table-column>
         <el-table-column label="上课具体时间" :formatter="dateFormat" prop="classTime" align="center"></el-table-column>
         <el-table-column label="时长（单位：分钟）" prop="duration" align="center"></el-table-column>
 
@@ -77,7 +77,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageId"
-        :page-sizes="[2, 4, 8]"
+        :page-sizes="[20, 40, 80]"
         :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -175,7 +175,7 @@
           minDate: '',
           maxDate: '',
           pageId: 1,
-          pageSize: 2
+          pageSize: 20
         },
         classRecordList: [],
         total: 0,
@@ -249,16 +249,19 @@
         }
         return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
+
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {
         this.queryInfo.pageSize = newSize
         this.getClassRecordList()
       },
+
       // 监听 页码值 改变
       handleCurrentChange(newPage) {
         this.queryInfo.pageId = newPage
         this.getClassRecordList()
       },
+
       // 添加上课记录
       addClassRecord(addForm) {
         this.$refs.addFormRef.validate(async valid => {
@@ -272,17 +275,19 @@
             duration: addForm.duration,
             content: addForm.content
           }))
-          if (res.code !== 0) return this.$message.error('获取课堂记录信息失败！')
+          if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
           this.$message.success('更新状态成功！')
           // 重新获取课堂记录信息
           this.getClassRecordList()
         })
       },
+
       // 监听添加课堂记录对话框的关闭事件
       addDialogClosed() {
         this.$refs.addFormRef.resetFields()
       },
+
       // 展示编辑课堂记录的对话框
       async showEditDialog(id) {
         const {data: res} = await this.$http.post('yl/classrecords/getclassrecord', qs.stringify({
@@ -293,11 +298,13 @@
         console.log(this.editForm)
         this.editDialogVisible = true
       },
+
       // 监听修改用户对话框的关闭时间
       editDialogClosed() {
         // resetFields()重置表单的函数
         this.$refs.editFormRef.resetFields()
       },
+
       // 修改课堂记录信息并提交
       editClassRecordInfo() {
         // 预校验
@@ -314,12 +321,13 @@
             content: this.editForm.content,
             id: this.editForm.id
           }))
-          if (res.code !== 0) return this.$message.error('修改课堂记录信息失败！')
+          if (res.code !== 0) return this.$message.error(res.msg)
           this.editDialogVisible = false
           this.getClassRecordList()
           this.$message.success('修改成功！')
         })
       },
+
       // 根据Id删除对应的课堂记录
       async removeClassRecordById(id) {
         // 询问用户是否删除
@@ -334,9 +342,10 @@
         const {data: res} = await this.$http.post('yl/classrecords/deleteclassrecord', qs.stringify({
           id: id
         }))
-        if (res.code !== 0) return this.$message.error('删除课堂记录信息失败！')
+        if (res.code !== 0) return this.$message.error(res.msg)
         this.getClassRecordList()
       },
+
       forDate(timestamp) {
         var date = new Date(timestamp)
         var y = date.getFullYear()
@@ -350,7 +359,7 @@
         mm = mm < 10 ? ('0' + mm) : mm
         var ss = date.getSeconds()
         ss = ss < 10 ? ('0' + ss) : ss
-        return y + "-" + m + "-" + d + " " + h + ":" + mm + ":" + ss
+        return y + '-' + m + '-' + d + ' ' + h + ':' + mm + ':' + ss
       }
     }
   }
@@ -368,10 +377,10 @@
       float: left;
       height: 40px;
       .el-select{
-        width: 125px;
+        width: 110px;
       }
       .el-date-editor.el-input, .el-date-editor.el-input__inner {
-        width: 200px;
+        width: 195px;
       }
     }
     .Add {
