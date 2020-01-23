@@ -28,11 +28,11 @@
           </el-select>
         </div>
         <div class="Add ">
-          <div class="select_keyword">
-            <el-input placeholder="请输入内容" v-model="queryInfo.keyword" clearable @clear="getClassRecordList">
-              <el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>
-            </el-input>
-          </div>
+          <!--<div class="select_keyword">-->
+            <!--<el-input placeholder="请输入内容" v-model="queryInfo.keyword" clearable @clear="getClassRecordList">-->
+              <!--<el-button slot="append" icon="el-icon-search" @click="getClassRecordList"></el-button>-->
+            <!--</el-input>-->
+          <!--</div>-->
           <div class="add_button">
             <el-button type="primary" @click="addDialogVisible = true">添加</el-button>
           </div>
@@ -41,21 +41,31 @@
 
       <!--列表区域-->
       <el-table :data="classRecordList" border stripe>
-        <el-table-column label="记录编号" prop="id" align="center"></el-table-column>
-        <el-table-column label="上课地点" align="center">
+        <el-table-column label="编号" prop="id" align="center"></el-table-column>
+        <el-table-column label="地点" align="center">
           <template slot-scope="scope">
             {{scope.row.locationId == 1 ? "望京" : "其它"}}
           </template>
         </el-table-column>
-        <el-table-column label="课堂名称" prop="className" align="center"></el-table-column>
-        <el-table-column label="课堂类型" align="center">
+        <el-table-column label="类型" align="center">
           <template slot-scope="scope">
             {{scope.row.classTypeId == 1 ? "大课" : (scope.row.classTypeId == 2 ? "小课" : "其它")}}
           </template>
         </el-table-column>
-        <el-table-column label="课时" prop="classPeriod" align="center" style="width: 50px"></el-table-column>
-        <el-table-column label="上课具体时间" :formatter="dateFormat" prop="classTime" align="center"></el-table-column>
-        <el-table-column label="时长（单位：分钟）" prop="duration" align="center"></el-table-column>
+        <el-table-column label="上课时间" :formatter="dateFormat" prop="startTime" align="center"></el-table-column>
+        <el-table-column label="下课时间" :formatter="dateFormat" prop="endTime" align="center"></el-table-column>
+        <el-table-column label="课时费" prop="tuition" align="center" style="width: 50px"></el-table-column>
+        <el-table-column label="是否已上" prop="state" align="center">
+          <template slot-scope="scope">
+            <el-switch
+              v-model='scope.row.isAttend'
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              :active-value="1"
+              :inactive-value="0" @change="classRecordStateChanged(scope.row)">
+            </el-switch>
+          </template>
+        </el-table-column>
 
         <el-table-column label="创建时间" :formatter="dateFormat" prop="createTime" align="center"></el-table-column>
         <el-table-column label="操作" width="185px" align="center">
@@ -93,25 +103,24 @@
               <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="课堂名称" prop="className" label-width="100px">
-            <el-input v-model="addForm.className"></el-input>
-          </el-form-item>
           <el-form-item label="课堂类型" prop="classTypeId" label-width="100px">
             <el-select v-model="addForm.classTypeId" placeholder="请选择">
               <el-option v-for="item in class_type" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="课时" prop="classPeriod" label-width="100px">
-            <el-input v-model="addForm.classPeriod"></el-input>
+          <el-form-item label="上课时间" prop="startTime" label-width="100px">
+            <el-date-picker v-model="addForm.startTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="上课具体时间" prop="classTime" label-width="100px">
-            <el-date-picker v-model="addForm.classTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-form-item label="下课时间" prop="endTime" label-width="100px">
+            <el-date-picker v-model="addForm.endTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="时长" prop="duration" label-width="100px">
-            <el-input v-model="addForm.duration" placeholder="单位：分钟"></el-input>
+          <el-form-item label="课时费" prop="tuition" label-width="100px">
+            <el-input v-model="addForm.tuition"></el-input>
           </el-form-item>
-          <el-form-item label="课堂备注" prop="content" label-width="100px" >
-            <el-input v-model="addForm.content"></el-input>
+          <el-form-item label="是否已出席" prop="locationId" label-width="100px" >
+            <el-select v-model="addForm.isAttend" placeholder="请选择">
+              <el-option v-for="item in is_attend" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <!--底部区域-->
@@ -130,25 +139,24 @@
               <el-option v-for="item in class_location" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="课堂名称" prop="className" label-width="100px">
-            <el-input v-model="editForm.className"></el-input>
-          </el-form-item>
           <el-form-item label="课堂类型" prop="classTypeId" label-width="100px">
             <el-select v-model="editForm.classTypeId" placeholder="请选择">
               <el-option v-for="item in class_type" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="课时" prop="classPeriod" label-width="100px">
-            <el-input v-model="editForm.classPeriod"></el-input>
+          <el-form-item label="上课时间" prop="startTime" label-width="100px">
+            <el-date-picker v-model="editForm.startTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="上课具体时间" prop="classTime" label-width="100px">
-            <el-date-picker v-model="editForm.classTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-form-item label="下课时间" prop="endTime" label-width="100px">
+            <el-date-picker v-model="editForm.endTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="时长" prop="duration" label-width="100px">
-            <el-input v-model="editForm.duration" placeholder="单位：分钟"></el-input>
+          <el-form-item label="课时费" prop="tuition" label-width="100px">
+            <el-input v-model="editForm.tuition"></el-input>
           </el-form-item>
-          <el-form-item label="课堂备注" prop="content" label-width="100px" >
-            <el-input v-model="editForm.content"></el-input>
+          <el-form-item label="是否已出席" prop="locationId" label-width="100px" >
+            <el-select v-model="editForm.isAttend" placeholder="请选择">
+              <el-option v-for="item in is_attend" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -184,17 +192,15 @@
         // 添加用户的表单数据
         addForm: {
           locationId: '',
-          className: '',
           classTypeId: '',
-          classPeriod: '',
-          classTime: '',
-          duration: '',
-          content: ''
+          startTime: '',
+          endTime: '',
+          tuition: '',
+          isAttend: ''
         },
         addFormRules: {
-          className: [
-            {required: true, message: '请输入课堂名称', trigger: 'blur'},
-            {min: 2, max: 50, message: '课堂名称的长度在2-50个字符'}
+          tuition: [
+            {required: true, message: '请输入课时费', trigger: 'blur'}
           ]
         },
         class_location: [
@@ -206,6 +212,10 @@
           {value: -1, label: '全部'},
           {value: 1, label: '大课'},
           {value: 2, label: '小课'}
+        ],
+        is_attend: [
+          {value: 0, label: '未出席'},
+          {value: 1, label: '已出席'}
         ],
         // 控制修改用户对话框的显示与隐藏
         editDialogVisible: false,
@@ -223,7 +233,7 @@
     created() {
       this.getClassRecordList()
       // 时间默认一周
-      var end = new Date(new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1)
+      var end = new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 24 * 60 * 60 * 1000 - 1)
       var start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
       start.setHours(0, 0, 0, 0)
@@ -268,12 +278,11 @@
           if (!valid) return
           const {data: res} = await this.$http.post('yl/classrecords/addclassrecord', qs.stringify({
             locationId: addForm.locationId,
-            className: addForm.className,
             classTypeId: addForm.classTypeId,
-            classPeriod: addForm.classPeriod,
-            classTime: this.$moment(addForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
-            duration: addForm.duration,
-            content: addForm.content
+            startTime: this.$moment(addForm.startTime).format('YYYY-MM-DD HH:mm:ss'),
+            endTime: this.$moment(addForm.endTime).format('YYYY-MM-DD HH:mm:ss'),
+            tuition: addForm.tuition,
+            isAttend: addForm.isAttend
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
@@ -295,11 +304,10 @@
         }))
         if (res.code !== 0) return this.$message.error('查询课堂记录信息失败！')
         this.editForm = res.data
-        console.log(this.editForm)
         this.editDialogVisible = true
       },
 
-      // 监听修改用户对话框的关闭时间
+      // 监听修改用户对话框的关闭事件
       editDialogClosed() {
         // resetFields()重置表单的函数
         this.$refs.editFormRef.resetFields()
@@ -313,12 +321,11 @@
           // 发起修改用户信息的数据请求
           const {data: res} = await this.$http.post('yl/classrecords/updateclassrecord', qs.stringify({
             locationId: this.editForm.locationId,
-            className: this.editForm.className,
             classTypeId: this.editForm.classTypeId,
-            classPeriod: this.editForm.classPeriod,
-            classTime: this.$moment(this.editForm.classTime).format('YYYY-MM-DD HH:mm:ss'),
-            duration: this.editForm.duration,
-            content: this.editForm.content,
+            startTime: this.$moment(this.editForm.startTime).format('YYYY-MM-DD HH:mm:ss'),
+            endTime: this.$moment(this.editForm.endTime).format('YYYY-MM-DD HH:mm:ss'),
+            tuition: this.editForm.tuition,
+            isAttend: this.editForm.isAttend,
             id: this.editForm.id
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
@@ -344,6 +351,19 @@
         }))
         if (res.code !== 0) return this.$message.error(res.msg)
         this.getClassRecordList()
+      },
+
+      // 更新课堂记录是否已上课
+      async classRecordStateChanged(classRecorInfo) {
+        const {data: res} = await this.$http.post('yl/classrecords/updateclassrecordisattend', qs.stringify({
+          id: classRecorInfo.id,
+          isAttend: classRecorInfo.isAttend
+        }))
+        if (res.code !== 0) {
+          classRecorInfo.state = !classRecorInfo.state
+          return this.$message.error('更新状态失败！')
+        }
+        this.$message.success('更新状态成功！')
       },
 
       forDate(timestamp) {
