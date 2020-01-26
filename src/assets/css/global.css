@@ -22,3 +22,14 @@ html, body, #app{
 .el-pagination{
   margin-top: 15px;
 }
+
+.el-calendar-table .el-calendar-day{
+  height: 100px !important;
+  width: 150px !important;
+}
+/*.calendar-day {*/
+  /*text-align: left;*/
+  /*color: #55a532;*/
+  /*line-height: 16px;*/
+  /*font-size: 13px;*/
+/*}*/

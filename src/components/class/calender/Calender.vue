@@ -19,7 +19,7 @@
               <div v-if="item.year == parseInt(data.day.split('-')[0])">
                 <div v-if="item.month == parseInt(data.day.split('-')[1])">
                   <div v-if="item.day == parseInt(data.day.split('-')[2])">
-                    {{item.location}} : {{item.time}}
+                    {{item.location}} : {{item.startTime}}-{{item.endTime}}
                   </div>
                 </div>
               </div>
@@ -83,9 +83,6 @@
 </script>
 
 <style lang="less" scoped>
-  .el-calendar-table .el-calendar-day{
-    height: 120px
-  }
   .calendar-day {
     text-align: left;
     color: #55a532;

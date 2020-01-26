@@ -82,12 +82,18 @@
         </el-table-column>
       </el-table>
 
+      <div class="footerText">
+        <span>大课{{bigCourseCount}}节，</span>
+        <span>小课{{smallCourseCount}}节，</span>
+        <span>共计{{allCourseTuition}}元</span>
+      </div>
+
       <!--分页区域-->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageId"
-        :page-sizes="[20, 40, 80]"
+        :page-sizes="[100, 200, 300]"
         :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -116,11 +122,6 @@
           </el-form-item>
           <el-form-item label="课时费" prop="tuition" label-width="100px">
             <el-input v-model="addForm.tuition"></el-input>
-          </el-form-item>
-          <el-form-item label="是否已出席" prop="locationId" label-width="100px" >
-            <el-select v-model="addForm.isAttend" placeholder="请选择">
-              <el-option v-for="item in is_attend" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
           </el-form-item>
         </el-form>
         <!--底部区域-->
@@ -154,7 +155,7 @@
             <el-input v-model="editForm.tuition"></el-input>
           </el-form-item>
           <el-form-item label="是否已出席" prop="locationId" label-width="100px" >
-            <el-select v-model="editForm.isAttend" placeholder="请选择">
+            <el-select v-model="editForm.isAttend" placeholder="请选择" disabled>
               <el-option v-for="item in is_attend" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
@@ -186,6 +187,9 @@
           pageSize: 20
         },
         classRecordList: [],
+        bigCourseCount: '',
+        smallCourseCount: '',
+        allCourseTuition: '',
         total: 0,
         // 控制添加上课记录对话框的显示与隐藏
         addDialogVisible: false,
@@ -195,8 +199,7 @@
           classTypeId: '',
           startTime: '',
           endTime: '',
-          tuition: '',
-          isAttend: ''
+          tuition: ''
         },
         addFormRules: {
           tuition: [
@@ -248,7 +251,11 @@
           params: this.queryInfo
         })
         if (res.code !== 0) return this.$message.error('获取管理员信息失败！')
-        this.classRecordList = res.data.data
+        console.log(res)
+        this.classRecordList = res.data.data.classRecordList
+        this.bigCourseCount = res.data.data.bigCourseCount
+        this.smallCourseCount = res.data.data.smallCourseCount
+        this.allCourseTuition = res.data.data.allCourseTuition
         this.total = res.data.totalCount
       },
       // 时间格式化
@@ -281,8 +288,7 @@
             classTypeId: addForm.classTypeId,
             startTime: this.$moment(addForm.startTime).format('YYYY-MM-DD HH:mm:ss'),
             endTime: this.$moment(addForm.endTime).format('YYYY-MM-DD HH:mm:ss'),
-            tuition: addForm.tuition,
-            isAttend: addForm.isAttend
+            tuition: addForm.tuition
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
