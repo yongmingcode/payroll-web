@@ -4,6 +4,7 @@ import Login from '../components/Login.vue'
 import Home from '../components/home/Home.vue'
 import Welcome from '../components/home/welcome/Welcome.vue'
 import Manager from '../components/manager/Manager.vue'
+import User from '../components/user/User.vue'
 import Calender from '../components/class/calender/Calender.vue'
 import ClassRecordList from '../components/class/class_record_list/ClassRecordList.vue'
 
@@ -18,10 +19,11 @@ const router = new Router({
       component: Home,
       redirect: '/welcome',
       children: [
-        {path: '/welcome', component: Welcome},
-        {path: '/manager', component: Manager},
-        {path: '/calendar', component: Calender},
-        {path: '/class_record_list', component: ClassRecordList}
+          {path: '/welcome', component: Welcome},
+          {path: '/manager', component: Manager},
+          {path: '/user', component: User},
+          {path: '/calendar', component: Calender},
+          {path: '/class_record_list', component: ClassRecordList}
         ]
     }
   ]

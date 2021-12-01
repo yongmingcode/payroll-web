@@ -3,7 +3,7 @@
     <!--面包屑导航区-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>管理员管理</el-breadcrumb-item>
+      <el-breadcrumb-item>人员管理</el-breadcrumb-item>
       <el-breadcrumb-item>管理员列表</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -66,9 +66,9 @@
         :total="total">
       </el-pagination>
 
-      <!--添加用户消息-->
+      <!--添加管理员消息-->
       <el-dialog
-        title="添加用户"
+        title="添加管理员"
         :visible.sync="addDialogVisible"
         width="50%">
         <!--内容主题区-->
