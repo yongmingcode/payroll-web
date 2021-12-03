@@ -7,6 +7,7 @@ import Manager from '../components/manager/Manager.vue'
 import User from '../components/user/User.vue'
 import Calender from '../components/class/calender/Calender.vue'
 import ClassRecordList from '../components/class/class_record_list/ClassRecordList.vue'
+import UserLessonCard from '../components/class/user_lesson_card/UserLessonCardList.vue'
 
 Vue.use(Router)
 
@@ -23,7 +24,8 @@ const router = new Router({
           {path: '/manager', component: Manager},
           {path: '/user', component: User},
           {path: '/calendar', component: Calender},
-          {path: '/class_record_list', component: ClassRecordList}
+          {path: '/class_record_list', component: ClassRecordList},
+          {path: '/user_lesson_card', component: UserLessonCard}
         ]
     }
   ]
