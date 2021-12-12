@@ -17,7 +17,7 @@
           </el-input>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary" @click="addDialogVisible = true">添加用户课卡</el-button>
+          <el-button type="primary" @click="addDialogClick()">添加用户课卡</el-button>
         </el-col>
       </el-row>
 
@@ -67,32 +67,37 @@
       <el-dialog
         title="添加用户课卡"
         :visible.sync="addDialogVisible"
-        width="50%">
+        width="40%">
         <!--内容主题区-->
         <el-form :model="addForm" ref="addFormRef" label-width="70px">
-          <el-form-item label="请选择用户" prop="name" label-width="100px">
-            <el-input v-model="addForm.name"></el-input>
+          <el-form-item label="请选择用户" prop="addFormUserNameParam" label-width="100px">
+            <el-select v-model="addFormUserNameParam" filterable remote reserve-keyword :remote-method="addDialogClick"
+             placeholder="请输入关键词" :loading="loading">
+              <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
+              :value="{ value: item.id, label: item.name }" ></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="课程类型" prop="gender" label-width="100px">
-            <el-select v-model="addForm.gender" placeholder="请选择">
-              <el-option v-for="item in user_gender" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+          <el-form-item label="课程类型" prop="lessonType" label-width="100px">
+            <el-select v-model="addForm.lessonType" placeholder="请选择">
+              <el-option v-for="item in lesson_type" :key="item.value" :label="item.label" :value="item.value" ></el-option>
             </el-select>
           </el-form-item> 
-          <el-form-item label="开始时间" prop="wechatCode" label-width="100px">
-            <el-input v-model="addForm.wechatCode"></el-input>
+          <el-form-item label="开始时间" prop="startTime" label-width="100px">
+            <el-date-picker v-model="addForm.startTime" type="date" placeholder="选择日期"></el-date-picker>
           </el-form-item>
-          <el-form-item label="结束时间" prop="phone" label-width="100px">
-            <el-input v-model="addForm.phone"></el-input>
+          <el-form-item label="结束时间" prop="endTime" label-width="100px">
+            <el-date-picker v-model="addForm.endTime" type="date" placeholder="选择日期"></el-date-picker> 
           </el-form-item>
-          <el-form-item label="课时总数" prop="groupLessonAll" label-width="100px">
-            <el-input v-model="addForm.groupLessonAll"></el-input>
+          <el-form-item label="课时总数" prop="lessonsAll" label-width="100px">
+            <el-col :span="4"> 
+            <el-input v-model="addForm.lessonsAll" type="number"></el-input>
+            </el-col>
           </el-form-item> 
-        </el-form>
-        
+        </el-form> 
         <!--底部区域-->
         <span slot="footer" class="dialog-footer">
             <el-button @click="addDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addUser(addForm)">确 定</el-button>
+            <el-button type="primary" @click="addUserLessonCard(addForm)">确 定</el-button>
           </span>
       </el-dialog>
 
@@ -100,31 +105,34 @@
       <el-dialog title="修改用户课卡信息" :visible.sync="editDialogVisible" width="40%"
       @close="editDialogClosed">
         <el-form ref="editFormRef" :model="editForm"  label-width="70px" >
-          <el-form-item label="名称" prop="name" label-width="100px">
-            <el-input v-model="editForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="性别" prop="gender" label-width="100px">
-            <el-select v-model="editForm.gender" placeholder="请选择">
-              <el-option v-for="item in user_gender" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+          <!-- <el-form-item label="请选择用户" prop="editFormUserNameParam" label-width="100px">
+            <el-select v-model="editFormUserNameParam" filterable remote reserve-keyword :remote-method="editDialogClick"
+             placeholder="请输入关键词" :loading="loading">
+              <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
+              :value="{ value: item.id, label: item.name }" ></el-option>
             </el-select>
+          </el-form-item> -->
+          <el-form-item label="请选择用户" prop="userName" label-width="100px">
+            <el-col :span="13">
+              <el-input v-model="editForm.userName" disabled></el-input>
+            </el-col>
           </el-form-item>
-          <el-form-item label="来源" prop="source" label-width="100px" >
-            <el-select v-model="editForm.source" placeholder="请选择">
-              <el-option v-for="item in user_source" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-form-item label="课程类型" prop="lessonType" label-width="100px">
+            <el-select v-model="editForm.lessonType" placeholder="请选择">
+              <el-option v-for="item in lesson_type" :key="item.value" :label="item.label" :value="item.value" ></el-option>
             </el-select>
+          </el-form-item> 
+          <el-form-item label="开始时间" prop="startTime" label-width="100px">
+             <el-date-picker v-model="editForm.startTime" type="date" placeholder="选择日期"></el-date-picker>
           </el-form-item>
-          <el-form-item label="微信号" prop="wechatCode" label-width="100px">
-            <el-input v-model="editForm.wechatCode"></el-input>
+          <el-form-item label="结束时间" prop="endTime" label-width="100px">
+            <el-date-picker v-model="editForm.endTime" type="date" placeholder="选择日期"></el-date-picker> 
           </el-form-item>
-          <el-form-item label="手机号" prop="phone" label-width="100px">
-            <el-input v-model="editForm.phone"></el-input>
-          </el-form-item>
-          <el-form-item label="大课课时总数" prop="groupLessonAll" label-width="100px">
-            <el-input v-model="editForm.groupLessonAll"></el-input>
-          </el-form-item>
-          <el-form-item label="vip小课总课数" prop="vipLessonAll" label-width="100px">
-            <el-input v-model="editForm.vipLessonAll"></el-input>
-          </el-form-item>
+          <el-form-item label="课时总数" prop="lessonsAll" label-width="100px">
+            <el-col :span="6"> 
+              <el-input v-model="editForm.lessonsAll" type="number"></el-input>
+            </el-col> 
+          </el-form-item> 
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
@@ -154,28 +162,28 @@
         addDialogVisible: false,
         // 添加用户的表单数据
         addForm: {
-          name: '',
-          gender: 0,
-          source: 2,
-          wechatCode: '',
-          phone: '',
-          groupLessonAll: '',
-          vipLessonAll: ''
+          userName: '',
+          lessonType: 1,  
+          startTime: '',
+          endTime: '',
+          lessonsAll: '' 
         }, 
         // 查询到的课堂记录信息对象
         editForm: {},
         // 控制修改用户对话框的显示与隐藏
-        editDialogVisible: false,
-        user_source: [
-          {value: 1, label: '美团'},
-          {value: 2, label: '点评'},
-          {value: 3, label: '到店'},
-          {value: 4, label: '地推'}
-        ], 
-        user_gender: [
-          {value: 0, label: '女'},
-          {value: 1, label: '男'}
-        ]
+        editDialogVisible: false, 
+        lesson_type: [
+          {value: 1, label: '成人集体课'},
+          {value: 2, label: '少儿集体课'},
+          {value: 3, label: 'vip小课'}
+        ],
+        userinfo_list: [
+          {id: 2, name: '少儿集体课'},
+          {id: 3, name: 'vip小课'}
+        ],
+        loading: false ,
+        addFormUserNameParam: [],
+        editFormUserNameParam: []
       }
     },
     created() {
@@ -200,26 +208,34 @@
         this.queryInfo.pageId = newPage
         this.getUserLessonCardList()
       }, 
-      // 时间格式化
-      dateFormat: function (row, column) {
+      // 日期时间格式化
+      dateTimeFormat: function (row, column) {
         var date = row[column.property]
         if (date === undefined) {
           return ''
         }
         return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
-      // 添加用户
-      addUser(addForm) {
+      // 日期格式化
+      dateTimeFormat: function (row, column) {
+        var date = row[column.property]
+        if (date === undefined) {
+          return ''
+        }
+        return this.$moment(date).format('YYYY-MM-DD')
+      },
+      // 添加用户课卡
+      addUserLessonCard(addForm) {
         this.$refs.addFormRef.validate(async valid => {
           if (!valid) return
-          const {data: res} = await this.$http.post('yl/user/addUser', qs.stringify({
-            name: addForm.name,
-            gender: addForm.gender,
-            source: addForm.source,
-            wechatCode: addForm.wechatCode,
-            phone: addForm.phone,
-            groupLessonAll: addForm.groupLessonAll,
-            vipLessonAll: addForm.vipLessonAll
+          const { value, label } = this.addFormUserNameParam
+          const {data: res} = await this.$http.post('yl/lessonCardRecord/addUserLessonCard', qs.stringify({
+            userId: value,
+            userName: label,
+            lessonType: addForm.lessonType,
+            startTime: this.$moment(addForm.startTime).format('YYYY-MM-DD'),
+            endTime: this.$moment(addForm.endTime).format('YYYY-MM-DD'),
+            lessonsAll: addForm.lessonsAll 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
@@ -229,10 +245,49 @@
         })
        },
 
+       // 监听添加用户对话框的点击事件
+      async addDialogClick(query) {
+        this.addDialogVisible = true
+        if(query !== ''){
+          // 发起获取用户课卡信息的数据请求
+          const {data: res} = await this.$http.post('yl/user/getUserListByName', qs.stringify({
+            userName: query
+          }))
+          if (res.code !== 0) return this.$message.error(res.msg)
+          this.userinfo_list = res.data 
+        }
+
+      },
+      // 监听添加用户对话框的点击事件
+      async editDialogClick(query) {
+        this.editDialogVisible = true
+        if(query !== ''){
+          // 发起获取用户课卡信息的数据请求
+          const {data: res} = await this.$http.post('yl/user/getUserListByName', qs.stringify({
+            userName: query
+          }))
+          if (res.code !== 0) return this.$message.error(res.msg)
+          this.userinfo_list = res.data 
+        }
+
+      },
+
       // 展示编辑课堂记录的对话框
       async showEditDialog(row) {
+        const {data: res} = await this.$http.post('yl/lessonCardRecord/getUserLessonCard', qs.stringify({
+          id: row.id
+        }))
         console.log(row)
-        this.editForm = row
+        if (res.code !== 0) return this.$message.error(res.msg)
+        this.editForm = res.data
+        console.log(res.data) 
+        // var myCar = new Object();
+        // myCar.id = res.data.userId;
+        // myCar.name = res.data.userName;
+        // console.log(this.editFormUserNameParam)
+        // this.editFormUserNameParam = myCar;
+        // console.log(this.editFormUserNameParam)
+        // console.log(myCar) 
         this.editDialogVisible = true
       },
 
@@ -242,21 +297,22 @@
         this.$refs.editFormRef.resetFields()
       },
 
-       // 修改用户信息并提交
+       // 修改用户课卡信息并提交
       editClassRecordInfo(editForm) {
         // 预校验
         this.$refs.editFormRef.validate(async valid => {
           if (!valid) return
-          // 发起修改用户信息的数据请求
-          const {data: res} = await this.$http.post('yl/user/updateUser', qs.stringify({
+          // 发起修改用户课卡信息的数据请求
+          console.log(editForm)
+          const {data: res} = await this.$http.post('yl/lessonCardRecord/updateUserLessonCard', qs.stringify({
             id: editForm.id,
-            name: editForm.name,
-            gender: editForm.gender,
-            source: editForm.source,
-            wechatCode: editForm.wechatCode,
-            phone: editForm.phone,
-            groupLessonAll: editForm.groupLessonAll,
-            vipLessonAll: editForm.vipLessonAll
+            lessonCardCode: editForm.lessonCardCode,
+            userId: editForm.userId,
+            userName: editForm.userName,
+            lessonType: editForm.lessonType,
+            startTime: editForm.startTime,
+            endTime: editForm.endTime,
+            lessonsAll: editForm.lessonsAll 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.editDialogVisible = false
