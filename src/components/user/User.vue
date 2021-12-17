@@ -38,11 +38,10 @@
         </el-table-column>
         <el-table-column label="微信号" prop="wechatCode"  align="center"></el-table-column>
         <el-table-column label="手机号" prop="phone"  align="center"></el-table-column>
-        <el-table-column label="大课数" prop="groupLessonAll" align="center"></el-table-column>
-        <el-table-column label="已上大课数" prop="usedGroupLessons" align="center"></el-table-column>
-        <el-table-column label="vip小课数" prop="vipLessonAll" align="center"></el-table-column>
-        <el-table-column label="已上vip数" prop="usedVipLessons" align="center"></el-table-column>
-        
+        <el-table-column label="成人集体课数" prop="auditGroupLessonNum" align="center"></el-table-column>
+        <el-table-column label="少儿集体课数" prop="childGroupLessonNum" align="center"></el-table-column>
+        <el-table-column label="vip小课数" prop="vipLessonNum" align="center"></el-table-column> 
+        <el-table-column label="创建时间" prop="createTime" :formatter="dateTimeFormat" align="center"></el-table-column>
         <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
@@ -94,12 +93,6 @@
           <el-form-item label="手机号" prop="phone" label-width="100px">
             <el-input v-model="addForm.phone"></el-input>
           </el-form-item>
-          <el-form-item label="大课课时总数" prop="groupLessonAll" label-width="100px">
-            <el-input v-model="addForm.groupLessonAll"></el-input>
-          </el-form-item>
-          <el-form-item label="vip小课总课数" prop="vipLessonAll" label-width="100px">
-            <el-input v-model="addForm.vipLessonAll"></el-input>
-          </el-form-item>
         </el-form>
         
         <!--底部区域-->
@@ -131,12 +124,6 @@
           </el-form-item>
           <el-form-item label="手机号" prop="phone" label-width="100px">
             <el-input v-model="editForm.phone"></el-input>
-          </el-form-item>
-          <el-form-item label="大课课时总数" prop="groupLessonAll" label-width="100px">
-            <el-input v-model="editForm.groupLessonAll"></el-input>
-          </el-form-item>
-          <el-form-item label="vip小课总课数" prop="vipLessonAll" label-width="100px">
-            <el-input v-model="editForm.vipLessonAll"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -171,9 +158,7 @@
           gender: 0,
           source: 2,
           wechatCode: '',
-          phone: '',
-          groupLessonAll: '',
-          vipLessonAll: ''
+          phone: '' 
         }, 
         // 查询到的课堂记录信息对象
         editForm: {},
@@ -222,7 +207,7 @@
         return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
       // 添加用户
-      addUser(addForm) {
+      addUser(addForm) { 
         this.$refs.addFormRef.validate(async valid => {
           if (!valid) return
           const {data: res} = await this.$http.post('yl/user/addUser', qs.stringify({
@@ -230,18 +215,32 @@
             gender: addForm.gender,
             source: addForm.source,
             wechatCode: addForm.wechatCode,
-            phone: addForm.phone,
-            groupLessonAll: addForm.groupLessonAll,
-            vipLessonAll: addForm.vipLessonAll
+            phone: addForm.phone 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
           this.$message.success('添加成功！')
+          this.$refs.addFormRef.resetFields()
           // 重新获取课堂记录信息
           this.getUserList()
         })
        },
-
+      // 日期时间格式化
+      dateTimeFormat: function (row, column) {
+        var date = row[column.property] 
+        if (date === undefined || date == null) {
+          return ''
+        }
+        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+      },
+      // 日期格式化
+      dateFormat: function (row, column) {
+        var date = row[column.property]
+        if (date === undefined || date == null) {
+          return ''
+        }
+        return this.$moment(date).format('YYYY-MM-DD')
+      },
       // 展示编辑课堂记录的对话框
       async showEditDialog(row) {
         console.log(row)
@@ -267,9 +266,7 @@
             gender: editForm.gender,
             source: editForm.source,
             wechatCode: editForm.wechatCode,
-            phone: editForm.phone,
-            groupLessonAll: editForm.groupLessonAll,
-            vipLessonAll: editForm.vipLessonAll
+            phone: editForm.phone 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.editDialogVisible = false

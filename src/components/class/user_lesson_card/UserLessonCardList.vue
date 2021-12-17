@@ -17,7 +17,7 @@
           </el-input>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary" @click="addDialogClick()">添加用户课卡</el-button>
+          <el-button type="primary" @click="addDialogVisible = true">添加用户课卡</el-button>
         </el-col>
       </el-row>
 
@@ -32,11 +32,11 @@
           </template>
         </el-table-column> 
         
-        <el-table-column label="开始时间" prop="startTime"  align="center"></el-table-column>
-        <el-table-column label="结束时间" prop="endTime"  align="center"></el-table-column>
+        <el-table-column label="开始时间" prop="startTime" :formatter="dateFormat"  align="center"></el-table-column>
+        <el-table-column label="结束时间" prop="endTime" :formatter="dateFormat"  align="center"></el-table-column>
         <el-table-column label="课时总数" prop="lessonsAll" align="center"></el-table-column>
-        <el-table-column label="创建时间" prop="createTime" align="center"></el-table-column>
-        <el-table-column label="修改时间" prop="updateTime" align="center"></el-table-column> 
+        <el-table-column label="创建时间" prop="createTime" align="center" :formatter="dateTimeFormat"></el-table-column>
+        <el-table-column label="修改时间" prop="updateTime" align="center" :formatter="dateTimeFormat"></el-table-column> 
 
         <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
@@ -70,11 +70,11 @@
         width="40%">
         <!--内容主题区-->
         <el-form :model="addForm" ref="addFormRef" label-width="70px">
-          <el-form-item label="请选择用户" prop="addFormUserNameParam" label-width="100px">
-            <el-select v-model="addFormUserNameParam" filterable remote reserve-keyword :remote-method="addDialogClick"
+          <el-form-item label="请选择用户" label-width="100px">
+            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick"
              placeholder="请输入关键词" :loading="loading">
               <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
-              :value="{ value: item.id, label: item.name }" ></el-option>
+              :value="item.id" ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="课程类型" prop="lessonType" label-width="100px">
@@ -105,18 +105,13 @@
       <el-dialog title="修改用户课卡信息" :visible.sync="editDialogVisible" width="40%"
       @close="editDialogClosed">
         <el-form ref="editFormRef" :model="editForm"  label-width="70px" >
-          <!-- <el-form-item label="请选择用户" prop="editFormUserNameParam" label-width="100px">
-            <el-select v-model="editFormUserNameParam" filterable remote reserve-keyword :remote-method="editDialogClick"
+          <el-form-item label="请选择用户" prop="userName" label-width="100px">
+            <el-select v-model="editForm.userName" filterable remote :remote-method="editDialogClick" @change="updateSelectChange"
              placeholder="请输入关键词" :loading="loading">
               <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
-              :value="{ value: item.id, label: item.name }" ></el-option>
+              :value="item.id" ></el-option>
             </el-select>
-          </el-form-item> -->
-          <el-form-item label="请选择用户" prop="userName" label-width="100px">
-            <el-col :span="13">
-              <el-input v-model="editForm.userName" disabled></el-input>
-            </el-col>
-          </el-form-item>
+          </el-form-item> 
           <el-form-item label="课程类型" prop="lessonType" label-width="100px">
             <el-select v-model="editForm.lessonType" placeholder="请选择">
               <el-option v-for="item in lesson_type" :key="item.value" :label="item.label" :value="item.value" ></el-option>
@@ -136,7 +131,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="editClassRecordInfo(editForm)">确 定</el-button>
+          <el-button type="primary" @click="editClassCardInfo(editForm)">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -146,6 +141,7 @@
 
 <script>
   import qs from 'qs'
+  import Service from './service/index'
 
   export default {
     data() {
@@ -177,10 +173,7 @@
           {value: 2, label: '少儿集体课'},
           {value: 3, label: 'vip小课'}
         ],
-        userinfo_list: [
-          {id: 2, name: '少儿集体课'},
-          {id: 3, name: 'vip小课'}
-        ],
+        userinfo_list: [],
         loading: false ,
         addFormUserNameParam: [],
         editFormUserNameParam: []
@@ -190,14 +183,23 @@
       this.getUserLessonCardList()
     },
     methods: {
-      async getUserLessonCardList() {
-        const {data: res} = await this.$http.get('yl/lessonCardRecord/getUserLessonCardList', {
-          params: this.queryInfo
+      // async getUserLessonCardList() {
+      //   const {data: res} = await this.$http.get('yl/lessonCardRecord/getUserLessonCardList', {
+      //     params: this.queryInfo
+      //   })
+      //   if (res.code !== 0) return this.$message.error('获取用户会员卡信息失败！')
+      //   this.userLessonCardList = res.data.data
+      //   this.total = res.data.totalCount
+      // },
+      // 获取用户课卡列表
+      getUserLessonCardList(queryInfo){ 
+        Service.getUserLessonCardList(queryInfo).then((res)=>{ 
+          if (res.code !== 0) return this.$message.error('获取用户会员卡信息失败!')
+          this.userLessonCardList = res.data.data
+          this.total = res.data.totalCount
         })
-        if (res.code !== 0) return this.$message.error('获取用户会员卡信息失败！')
-        this.userLessonCardList = res.data.data
-        this.total = res.data.totalCount
       },
+
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {
         this.queryInfo.pageSize = newSize
@@ -210,44 +212,71 @@
       }, 
       // 日期时间格式化
       dateTimeFormat: function (row, column) {
-        var date = row[column.property]
-        if (date === undefined) {
+        var date = row[column.property] 
+        if (date === undefined || date == null) {
           return ''
         }
         return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
       // 日期格式化
-      dateTimeFormat: function (row, column) {
+      dateFormat: function (row, column) {
         var date = row[column.property]
-        if (date === undefined) {
+        if (date === undefined || date == null) {
           return ''
         }
         return this.$moment(date).format('YYYY-MM-DD')
       },
       // 添加用户课卡
-      addUserLessonCard(addForm) {
-        this.$refs.addFormRef.validate(async valid => {
-          if (!valid) return
-          const { value, label } = this.addFormUserNameParam
-          const {data: res} = await this.$http.post('yl/lessonCardRecord/addUserLessonCard', qs.stringify({
-            userId: value,
-            userName: label,
-            lessonType: addForm.lessonType,
-            startTime: this.$moment(addForm.startTime).format('YYYY-MM-DD'),
-            endTime: this.$moment(addForm.endTime).format('YYYY-MM-DD'),
-            lessonsAll: addForm.lessonsAll 
-          }))
-          if (res.code !== 0) return this.$message.error(res.msg)
-          this.addDialogVisible = false
-          this.$message.success('添加成功！')
-          // 重新获取课堂记录信息
-          this.getUserLessonCardList()
+      // async addUserLessonCard(addForm) {
+      //   this.$refs.addFormRef.validate(async valid => {
+          // if (!valid) return 
+          // let userInfo = {}
+          // userInfo = this.userinfo_list.find((item) =>
+          //   {
+          //     return item.id === addForm.userId;
+          //   } 
+          // ) 
+          // // const { value, label } = this.addFormUserNameParam
+          // const {data: res} = await this.$http.post('yl/lessonCardRecord/addUserLessonCard', qs.stringify({
+          //   userId: addForm.userId,
+          //   userName: userInfo.name,
+          //   lessonType: addForm.lessonType,
+          //   startTime: this.$moment(addForm.startTime).format('YYYY-MM-DD'),
+          //   endTime: this.$moment(addForm.endTime).format('YYYY-MM-DD'),
+          //   lessonsAll: addForm.lessonsAll 
+          // }))
+          // if (res.code !== 0) return this.$message.error(res.msg)
+          // this.addDialogVisible = false
+          // this.$message.success('添加成功！')
+          // // 重新获取课堂记录信息
+          // this.getUserLessonCardList()
+      //   })
+      //  },
+      // 添加用户课卡
+      addUserLessonCard(addForm){  
+        console.log(addForm)
+        this.$refs.addFormRef.validate(async valid => { 
+          if (!valid) return 
+          let userInfo = {}
+          userInfo = this.userinfo_list.find((item) =>
+            {
+              return item.id === addForm.userId;
+            } 
+          ) 
+          // const { value, label } = this.addFormUserNameParam
+          addForm.userName = userInfo.name;
+          Service.addUserLessonCard(addForm).then((res)=>{ 
+            if (res.code !== 0) return this.$message.error(res.msg)
+            this.addDialogVisible = false
+            this.$message.success('添加成功!')
+            // 重新获取课堂记录信息
+            this.getUserLessonCardList()
+          }) 
         })
-       },
-
-       // 监听添加用户对话框的点击事件
-      async addDialogClick(query) {
-        this.addDialogVisible = true
+      },
+       
+       // 添加失焦-查询用户信息
+      async addDialogClick(query) { 
         if(query !== ''){
           // 发起获取用户课卡信息的数据请求
           const {data: res} = await this.$http.post('yl/user/getUserListByName', qs.stringify({
@@ -255,12 +284,32 @@
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.userinfo_list = res.data 
+          // console.log(this.editForm.userName ,'res.data res.data ')
+          // this.editForm.id= this.userinfo_list[0].id
+          // this.editForm.userName = this.userinfo_list[0].name
+          // console.log(this.userinfo_list[0],'222222222')
+          // console.log(this.userinfo_list[0].name,'111111')
+          
+          this.$set(this.addForm,'userId',this.userinfo_list[0].id)
+          this.$set(this.addForm,'userName',this.userinfo_list[0].name)
         }
 
       },
-      // 监听添加用户对话框的点击事件
-      async editDialogClick(query) {
-        this.editDialogVisible = true
+
+      // 修改选中事件-参数改变
+      updateSelectChange(e){ 
+        let userInfo = {}
+        userInfo = this.userinfo_list.find((item) =>
+          {
+            return item.id === e;
+          } 
+        )
+        this.editForm.userId = userInfo.id
+        this.editForm.userName = userInfo.name 
+      },
+
+      // 修改失焦事件-查询用户信息，选择不建议放到这里操作，在选中事件@change中操作
+      async editDialogClick(query) { 
         if(query !== ''){
           // 发起获取用户课卡信息的数据请求
           const {data: res} = await this.$http.post('yl/user/getUserListByName', qs.stringify({
@@ -268,26 +317,25 @@
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.userinfo_list = res.data 
+ 
+          // this.editForm.id= this.userinfo_list[0].id
+          // this.editForm.userName = this.userinfo_list[0].name
+          // console.log(this.userinfo_list[0],'222222222')
+          // console.log(this.userinfo_list[0].name,'111111')
+          
+          // this.$set(this.editForm,'userId',this.userinfo_list[0].id)
+          // this.$set(this.editForm,'userName',this.userinfo_list[0].name) 
         }
 
-      },
+      }, 
 
       // 展示编辑课堂记录的对话框
       async showEditDialog(row) {
         const {data: res} = await this.$http.post('yl/lessonCardRecord/getUserLessonCard', qs.stringify({
           id: row.id
-        }))
-        console.log(row)
+        })) 
         if (res.code !== 0) return this.$message.error(res.msg)
-        this.editForm = res.data
-        console.log(res.data) 
-        // var myCar = new Object();
-        // myCar.id = res.data.userId;
-        // myCar.name = res.data.userName;
-        // console.log(this.editFormUserNameParam)
-        // this.editFormUserNameParam = myCar;
-        // console.log(this.editFormUserNameParam)
-        // console.log(myCar) 
+        this.editForm = res.data  
         this.editDialogVisible = true
       },
 
@@ -297,29 +345,43 @@
         this.$refs.editFormRef.resetFields()
       },
 
-       // 修改用户课卡信息并提交
-      editClassRecordInfo(editForm) {
-        // 预校验
-        this.$refs.editFormRef.validate(async valid => {
-          if (!valid) return
-          // 发起修改用户课卡信息的数据请求
-          console.log(editForm)
-          const {data: res} = await this.$http.post('yl/lessonCardRecord/updateUserLessonCard', qs.stringify({
-            id: editForm.id,
-            lessonCardCode: editForm.lessonCardCode,
-            userId: editForm.userId,
-            userName: editForm.userName,
-            lessonType: editForm.lessonType,
-            startTime: editForm.startTime,
-            endTime: editForm.endTime,
-            lessonsAll: editForm.lessonsAll 
-          }))
-          if (res.code !== 0) return this.$message.error(res.msg)
-          this.editDialogVisible = false
-          this.getUserLessonCardList()
-          this.$message.success('修改成功！')
+      //  // 修改用户课卡信息并提交
+      // editClassCardInfo(editForm) {
+      //   console.log(editForm,'editFormeditForm')
+       
+      //   // 预校验
+      //   this.$refs.editFormRef.validate(async valid => {
+      //     if (!valid) return
+      //     // 发起修改用户课卡信息的数据请求
+      //     console.log(editForm,'editFormeditFormeditFormeditForm')
+      //     const {data: res} = await this.$http.post('yl/lessonCardRecord/updateUserLessonCard', qs.stringify({
+      //       id: editForm.id,
+      //       lessonCardCode: editForm.lessonCardCode,
+      //       userId: editForm.userId,
+      //       userName: editForm.userName,
+      //       lessonType: editForm.lessonType,
+      //       startTime: editForm.startTime,
+      //       endTime: editForm.endTime,
+      //       lessonsAll: editForm.lessonsAll 
+      //     }))
+      //     if (res.code !== 0) return this.$message.error(res.msg)
+      //     this.editDialogVisible = false
+      //     this.getUserLessonCardList()
+      //     this.$message.success('修改成功！')
+      //   })
+      // },
+      editClassCardInfo(editForm){ 
+        console.log(editForm)
+        this.$refs.editFormRef.validate(async valid => { 
+          if (!valid) return   
+          Service.editClassCardInfo(editForm).then((res)=>{ 
+            if (res.code !== 0) return this.$message.error(res.msg)
+            this.editDialogVisible = false
+            this.getUserLessonCardList()
+            this.$message.success('修改成功!')
+          }) 
         })
-      }
+      },
     }
   }
 </script>
