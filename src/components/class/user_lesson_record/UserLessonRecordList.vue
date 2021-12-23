@@ -24,7 +24,7 @@
       <!--用户列表区域-->
       <el-table :data="userList" border stripe>
         <el-table-column label="#" type="index"></el-table-column>
-        <el-table-column label="用户编号" prop="userId" align="center"></el-table-column>
+        <el-table-column label="用户名称" prop="userName" align="center"></el-table-column>
         <el-table-column label="上课时间" prop="attendClassStartTime" :formatter="dateTimeFormat"  align="center"></el-table-column>
         <el-table-column label="下课时间" prop="attendClassEndTime" :formatter="dateTimeFormat" align="center"></el-table-column>
         <el-table-column label="课时" prop="usedLessons"  align="center"></el-table-column>

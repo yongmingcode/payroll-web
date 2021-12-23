@@ -100,7 +100,7 @@
             </el-col>
           </el-form-item>
           <el-form-item label="是否有效" prop="isValid" label-width="100px"> 
-              <template slot-scope="scope">
+              <template>
                 <el-switch
                   v-model='addForm.isValid'
                   active-color="#13ce66"
@@ -152,7 +152,7 @@
             </el-col>
           </el-form-item>
           <el-form-item label="是否有效" prop="isValid" label-width="100px"> 
-              <template slot-scope="scope">
+              <template>
                 <el-switch
                   v-model='editForm.isValid'
                   active-color="#13ce66"

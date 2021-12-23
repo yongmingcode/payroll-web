@@ -24,30 +24,29 @@
       <!--用户课卡列表区域-->
       <el-table :data="userLessonCardList" border stripe>
         <el-table-column label="#" type="index"></el-table-column>
-        <el-table-column label="课卡编号" prop="lessonCardCode" align="center"></el-table-column>
+        <el-table-column label="课卡编号" prop="lessonCardCode" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column label="用户名称" prop="userName" align="center"></el-table-column> 
         <el-table-column label="课程类型"  align="center">
            <template slot-scope="scope">
             {{scope.row.lessonType == 1 ? "成人集体课卡" : (scope.row.lessonType == 2 ? "少儿集体课卡" : (scope.row.lessonType == 3 ? "vip小课卡" : ""))}}
           </template>
-        </el-table-column> 
-        
+        </el-table-column>
         <el-table-column label="开始时间" prop="startTime" :formatter="dateFormat"  align="center"></el-table-column>
         <el-table-column label="结束时间" prop="endTime" :formatter="dateFormat"  align="center"></el-table-column>
         <el-table-column label="课时总数" prop="lessonsAll" align="center"></el-table-column>
         <el-table-column label="创建时间" prop="createTime" align="center" :formatter="dateTimeFormat"></el-table-column>
         <el-table-column label="修改时间" prop="updateTime" align="center" :formatter="dateTimeFormat"></el-table-column> 
 
-        <el-table-column label="操作" width="185px" align="center">
+        <el-table-column label="操作" width="100px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
             <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row)"></el-button>
             <!--删除按钮-->
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <!-- <el-button type="danger" icon="el-icon-delete" size="mini"></el-button> -->
             <!--分配角色按钮-->
-            <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
-            </el-tooltip>
+            <!-- <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false"> -->
+              <!-- <el-button type="warning" icon="el-icon-setting" size="mini"></el-button> -->
+            <!-- </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -89,7 +88,7 @@
             <el-date-picker v-model="addForm.endTime" type="date" placeholder="选择日期"></el-date-picker> 
           </el-form-item>
           <el-form-item label="课时总数" prop="lessonsAll" label-width="100px">
-            <el-col :span="4"> 
+            <el-col :span="6"> 
             <el-input v-model="addForm.lessonsAll" type="number"></el-input>
             </el-col>
           </el-form-item> 
