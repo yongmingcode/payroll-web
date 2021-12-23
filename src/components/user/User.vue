@@ -24,7 +24,7 @@
       <!--用户列表区域-->
       <el-table :data="userList" border stripe>
         <el-table-column label="#" type="index"></el-table-column>
-        <el-table-column label="用户编号" prop="userCode" align="center"></el-table-column>
+        <el-table-column label="用户编号" prop="userCode" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column label="名称" prop="name"  align="center"></el-table-column>
         <el-table-column label="性别"  align="center">
            <template slot-scope="scope">
@@ -42,16 +42,16 @@
         <el-table-column label="少儿集体课数" prop="childGroupLessonNum" align="center"></el-table-column>
         <el-table-column label="vip小课数" prop="vipLessonNum" align="center"></el-table-column> 
         <el-table-column label="创建时间" prop="createTime" :formatter="dateTimeFormat" align="center"></el-table-column>
-        <el-table-column label="操作" width="185px" align="center">
+        <el-table-column label="操作" width="100px" align="center">
           <template slot-scope="scope">
             <!--修改按钮-->
             <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row)"></el-button>
             <!--删除按钮-->
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <!-- <el-button type="danger" icon="el-icon-delete" size="mini"></el-button> -->
             <!--分配角色按钮-->
-            <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+            <!-- <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
               <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -75,7 +75,9 @@
         <!--内容主题区-->
         <el-form :model="addForm" ref="addFormRef" label-width="70px">
           <el-form-item label="名称" prop="name" label-width="100px">
-            <el-input v-model="addForm.name"></el-input>
+            <el-col :span="10">
+              <el-input v-model="addForm.name"></el-input>
+            </el-col>
           </el-form-item>
           <el-form-item label="性别" prop="gender" label-width="100px">
             <el-select v-model="addForm.gender" placeholder="请选择">
@@ -88,11 +90,29 @@
             </el-select>
           </el-form-item>
           <el-form-item label="微信号" prop="wechatCode" label-width="100px">
-            <el-input v-model="addForm.wechatCode"></el-input>
+            <el-col :span="10">
+              <el-input v-model="addForm.wechatCode"></el-input>
+            </el-col>
           </el-form-item>
           <el-form-item label="手机号" prop="phone" label-width="100px">
-            <el-input v-model="addForm.phone"></el-input>
+            <el-col :span="10">
+              <el-input v-model="addForm.phone"></el-input>
+            </el-col>
           </el-form-item>
+          <el-form-item label="是否有效" prop="isValid" label-width="100px"> 
+              <template slot-scope="scope">
+                <el-switch
+                  v-model='addForm.isValid'
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0"  
+                   >
+                </el-switch>
+              </template> 
+          </el-form-item>
+        
+          
         </el-form>
         
         <!--底部区域-->
@@ -107,11 +127,13 @@
       @close="editDialogClosed">
         <el-form ref="editFormRef" :model="editForm"  label-width="70px" >
           <el-form-item label="名称" prop="name" label-width="100px">
-            <el-input v-model="editForm.name"></el-input>
+            <el-col :span="13">
+              <el-input v-model="editForm.name"></el-input>
+            </el-col>
           </el-form-item>
           <el-form-item label="性别" prop="gender" label-width="100px">
-            <el-select v-model="editForm.gender" placeholder="请选择">
-              <el-option v-for="item in user_gender" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+            <el-select v-model="editForm.gender" placeholder="请选择"> 
+              <el-option v-for="item in user_gender" :key="item.value" :label="item.label" :value="item.value" ></el-option> 
             </el-select>
           </el-form-item>
           <el-form-item label="来源" prop="source" label-width="100px" >
@@ -120,10 +142,26 @@
             </el-select>
           </el-form-item>
           <el-form-item label="微信号" prop="wechatCode" label-width="100px">
-            <el-input v-model="editForm.wechatCode"></el-input>
+            <el-col :span="13">
+              <el-input v-model="editForm.wechatCode"></el-input>
+            </el-col>
           </el-form-item>
           <el-form-item label="手机号" prop="phone" label-width="100px">
-            <el-input v-model="editForm.phone"></el-input>
+            <el-col :span="13">
+              <el-input v-model="editForm.phone"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="是否有效" prop="isValid" label-width="100px"> 
+              <template slot-scope="scope">
+                <el-switch
+                  v-model='editForm.isValid'
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0" 
+                   >
+                </el-switch>
+              </template> 
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -158,7 +196,8 @@
           gender: 0,
           source: 2,
           wechatCode: '',
-          phone: '' 
+          phone: '',
+          isValid: 1
         }, 
         // 查询到的课堂记录信息对象
         editForm: {},
@@ -215,7 +254,8 @@
             gender: addForm.gender,
             source: addForm.source,
             wechatCode: addForm.wechatCode,
-            phone: addForm.phone 
+            phone: addForm.phone,
+            isValid: addForm.isValid 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.addDialogVisible = false
@@ -242,8 +282,7 @@
         return this.$moment(date).format('YYYY-MM-DD')
       },
       // 展示编辑课堂记录的对话框
-      async showEditDialog(row) {
-        console.log(row)
+      async showEditDialog(row) { 
         this.editForm = row
         this.editDialogVisible = true
       },
@@ -251,11 +290,12 @@
       // 监听修改用户对话框的关闭事件
       editDialogClosed() {
         // resetFields()重置表单的函数
-        this.$refs.editFormRef.resetFields()
+        // this.$refs.editFormRef.resetFields() // 加上该行，会造成列表数据展示错误
       },
 
        // 修改用户信息并提交
       editClassRecordInfo(editForm) {
+        console.log(editForm)
         // 预校验
         this.$refs.editFormRef.validate(async valid => {
           if (!valid) return
@@ -266,7 +306,8 @@
             gender: editForm.gender,
             source: editForm.source,
             wechatCode: editForm.wechatCode,
-            phone: editForm.phone 
+            phone: editForm.phone,
+            isValid: editForm.isValid 
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.editDialogVisible = false
