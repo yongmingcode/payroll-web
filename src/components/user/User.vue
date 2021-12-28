@@ -12,8 +12,10 @@
       <!--搜索与添加区域-->
       <el-row :gutter="20">
         <el-col :span="4">
-          <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.userName" >
+            <template slot="append">
+              <el-button  icon="el-icon-search" @click="getUserList()"></el-button>
+            </template>
           </el-input>
         </el-col>
         <el-col :span="2">
@@ -182,7 +184,7 @@
       return {
         // 获取用户列表的参数对象
         queryInfo: {
-          // query: '',
+          userName: '',
           pageId: 1,
           pageSize: 10
         },
@@ -220,6 +222,7 @@
     },
     methods: {
       async getUserList() {
+        console.log(this.queryInfo)
         const {data: res} = await this.$http.get('yl/user/getUserList', {
           params: this.queryInfo
         })
