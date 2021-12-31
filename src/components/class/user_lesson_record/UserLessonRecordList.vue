@@ -68,7 +68,7 @@
         <!--内容主题区-->
         <el-form :model="addForm" ref="addFormRef" label-width="70px">
           <el-form-item label="请选择用户" label-width="100px">
-            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick"
+            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick" @change="addSelectChange"
              placeholder="请输入关键词" :loading="loading">
               <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
               :value="item.id" ></el-option>
@@ -188,8 +188,8 @@
       this.getUserLessonRecordList()
     },
     methods: {
-      getUserLessonRecordList(queryInfo){ 
-        Service.getUserLessonRecordList(queryInfo).then((res)=>{ 
+      getUserLessonRecordList(){ 
+        Service.getUserLessonRecordList(this.queryInfo).then((res)=>{ 
           if (res.code !== 0) return this.$message.error('获取用户信息失败!')
           this.userList = res.data.data
           this.total = res.data.totalCount
@@ -272,10 +272,23 @@
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.userinfo_list = res.data  
-          this.$set(this.addForm,'userId',this.userinfo_list[0].id)
-          this.$set(this.addForm,'userName',this.userinfo_list[0].name)
+          // this.$set(this.addForm,'userId',this.userinfo_list[0].id)
+          // this.$set(this.addForm,'userName',this.userinfo_list[0].name)
         } 
       },
+
+        // 添加选中事件-参数改变
+      addSelectChange(e){ 
+        let userInfo = {}
+        userInfo = this.userinfo_list.find((item) =>
+          {
+            return item.id === e;
+          } 
+        )
+        this.addForm.userId = userInfo.id
+        this.addForm.userName = userInfo.name 
+      },
+
 
       // 展示编辑课堂记录的对话框
       async showEditDialog(row) {

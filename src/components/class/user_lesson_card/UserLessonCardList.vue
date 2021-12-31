@@ -70,7 +70,7 @@
         <!--内容主题区-->
         <el-form :model="addForm" ref="addFormRef" label-width="70px">
           <el-form-item label="请选择用户" label-width="100px">
-            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick"
+            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick"  @change="addSelectChange"
              placeholder="请输入关键词" :loading="loading">
               <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
               :value="item.id" ></el-option>
@@ -82,10 +82,10 @@
             </el-select>
           </el-form-item> 
           <el-form-item label="开始时间" prop="startTime" label-width="100px">
-            <el-date-picker v-model="addForm.startTime" type="date" placeholder="选择日期"></el-date-picker>
+            <el-date-picker v-model="addForm.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime" label-width="100px">
-            <el-date-picker v-model="addForm.endTime" type="date" placeholder="选择日期"></el-date-picker> 
+            <el-date-picker v-model="addForm.endTime" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"></el-date-picker> 
           </el-form-item>
           <el-form-item label="课时总数" prop="lessonsAll" label-width="100px">
             <el-col :span="6"> 
@@ -191,8 +191,8 @@
       //   this.total = res.data.totalCount
       // },
       // 获取用户课卡列表
-      getUserLessonCardList(queryInfo){ 
-        Service.getUserLessonCardList(queryInfo).then((res)=>{ 
+      getUserLessonCardList(){ 
+        Service.getUserLessonCardList(this.queryInfo).then((res)=>{ 
           if (res.code !== 0) return this.$message.error('获取用户会员卡信息失败!')
           this.userLessonCardList = res.data.data
           this.total = res.data.totalCount
@@ -261,7 +261,7 @@
             {
               return item.id === addForm.userId;
             } 
-          ) 
+          )  
           // const { value, label } = this.addFormUserNameParam
           addForm.userName = userInfo.name;
           Service.addUserLessonCard(addForm).then((res)=>{ 
@@ -283,16 +283,29 @@
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
           this.userinfo_list = res.data 
+          // console.log(this.userinfo_list, "this.userinfo_listthis.userinfo_list")
           // console.log(this.editForm.userName ,'res.data res.data ')
           // this.editForm.id= this.userinfo_list[0].id
           // this.editForm.userName = this.userinfo_list[0].name
           // console.log(this.userinfo_list[0],'222222222')
           // console.log(this.userinfo_list[0].name,'111111')
           
-          this.$set(this.addForm,'userId',this.userinfo_list[0].id)
-          this.$set(this.addForm,'userName',this.userinfo_list[0].name)
+          // this.$set(this.addForm,'userId',this.userinfo_list[0].id)
+          // this.$set(this.addForm,'userName',this.userinfo_list[0].name)
         }
 
+      },
+
+      // 添加选中事件-参数改变
+      addSelectChange(e){ 
+        let userInfo = {}
+        userInfo = this.userinfo_list.find((item) =>
+          {
+            return item.id === e;
+          } 
+        )
+        this.addForm.userId = userInfo.id
+        this.addForm.userName = userInfo.name 
       },
 
       // 修改选中事件-参数改变

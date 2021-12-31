@@ -19,8 +19,8 @@ service.interceptors.request.use((config) => {
   if(config.rootPath){
     config.url = config.url;
   }else{
-    // config.url = "http://localhost:8089/" + config.url;
-    config.url = "http://47.93.244.206:8089/" + config.url;
+    config.url = "http://localhost:8089/" + config.url;
+    // config.url = "http://47.93.244.206:8089/" + config.url;
     // config.url = __appletPathConfig + config.url;
   }
   return config;
