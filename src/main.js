@@ -13,11 +13,13 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
+import {env_hostUrl} from '../src/util/environment';
 
 Vue.prototype.$moment = moment
 var instance = axios.create({
   // baseURL: 'http://47.93.244.206:8089/',
-  baseURL: 'http://localhost:8089/',
+  // baseURL: 'http://localhost:8089/',
+  baseURL: env_hostUrl,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'

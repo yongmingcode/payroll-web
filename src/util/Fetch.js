@@ -1,5 +1,5 @@
 import axios from 'axios'; 
-// import {__appletPathConfig} from './environment';
+import {env_hostUrl} from './environment';
 import { Message } from 'element-ui'; 
 // 创建axios实例
 const service = axios.create({
@@ -19,7 +19,7 @@ service.interceptors.request.use((config) => {
   if(config.rootPath){
     config.url = config.url;
   }else{
-    config.url = "http://localhost:8089/" + config.url;
+    config.url = env_hostUrl + config.url;
     // config.url = "http://47.93.244.206:8089/" + config.url;
     // config.url = __appletPathConfig + config.url;
   }
