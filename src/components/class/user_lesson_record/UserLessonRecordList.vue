@@ -211,7 +211,7 @@
         if (date === undefined || date == null) {
           return ''
         }
-        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+        return this.$moment(date).format('YYYY-MM-DD HH:mm')
       },
       // 日期格式化
       dateFormat: function (row, column) {

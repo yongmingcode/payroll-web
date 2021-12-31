@@ -35,7 +35,7 @@
         <el-table-column label="结束时间" prop="endTime" :formatter="dateFormat"  align="center"></el-table-column>
         <el-table-column label="课时总数" prop="lessonsAll" align="center"></el-table-column>
         <el-table-column label="创建时间" prop="createTime" align="center" :formatter="dateTimeFormat"></el-table-column>
-        <el-table-column label="修改时间" prop="updateTime" align="center" :formatter="dateTimeFormat"></el-table-column> 
+        <!-- <el-table-column label="修改时间" prop="updateTime" align="center" :formatter="dateTimeFormat"></el-table-column>  -->
 
         <el-table-column label="操作" width="100px" align="center">
           <template slot-scope="scope">
@@ -215,7 +215,7 @@
         if (date === undefined || date == null) {
           return ''
         }
-        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+        return this.$moment(date).format('YYYY-MM-DD HH:mm')
       },
       // 日期格式化
       dateFormat: function (row, column) {
