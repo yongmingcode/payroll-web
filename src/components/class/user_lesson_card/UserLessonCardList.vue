@@ -117,10 +117,10 @@
             </el-select>
           </el-form-item> 
           <el-form-item label="开始时间" prop="startTime" label-width="100px">
-             <el-date-picker v-model="editForm.startTime" type="date" placeholder="选择日期"></el-date-picker>
+             <el-date-picker v-model="editForm.startTime" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime" label-width="100px">
-            <el-date-picker v-model="editForm.endTime" type="date" placeholder="选择日期"></el-date-picker> 
+            <el-date-picker v-model="editForm.endTime" type="date" placeholder="选择日期"  value-format="yyyy-MM-dd"></el-date-picker> 
           </el-form-item>
           <el-form-item label="课时总数" prop="lessonsAll" label-width="100px">
             <el-col :span="6"> 
