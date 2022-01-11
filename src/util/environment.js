@@ -15,4 +15,6 @@
 // export const __parentId = document.getElementById("parentId").value;
 // export const __number = document.getElementById("number").value; 
 
-export const env_hostUrl = 'http://localhost:8089/';
+export const env_hostUrl = 'http://47.93.244.206:8089/';
+  // baseURL: 'http://47.93.244.206:8089/',
+  // baseURL: 'http://localhost:8089/',
