@@ -38,11 +38,15 @@
             {{scope.row.source == 1 ? "美团" : (scope.row.source == 2 ? "点评" : (scope.row.source == 3 ? "到店" : (scope.row.source == 4 ? "地推" : "")))}}
           </template>
         </el-table-column>
-        <el-table-column label="微信号" prop="wechatCode"  align="center"></el-table-column>
+        <!-- <el-table-column label="微信号" prop="wechatCode"  align="center"></el-table-column> -->
         <el-table-column label="手机号" prop="phone"  align="center"></el-table-column>
-        <el-table-column label="成人集体课数" prop="auditGroupLessonNum" align="center"></el-table-column>
-        <el-table-column label="少儿集体课数" prop="childGroupLessonNum" align="center"></el-table-column>
-        <el-table-column label="vip小课数" prop="vipLessonNum" align="center"></el-table-column> 
+        <el-table-column label="成人/少儿/vip课余数" prop="auditGroupLessonNum" align="center">
+          <template slot-scope="scope"> 
+            {{scope.row.auditGroupLessonNum}}/{{scope.row.childGroupLessonNum}}/{{scope.row.vipLessonNum}}
+           </template> 
+        </el-table-column>
+        <!-- <el-table-column label="少儿集体课数" prop="childGroupLessonNum" align="center"></el-table-column>
+        <el-table-column label="vip小课数" prop="vipLessonNum" align="center"></el-table-column>  -->
         <el-table-column label="创建时间" prop="createTime" :formatter="dateTimeFormat" align="center"></el-table-column>
         <el-table-column label="操作" width="100px" align="center">
           <template slot-scope="scope">

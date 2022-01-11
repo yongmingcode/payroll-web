@@ -12,8 +12,10 @@
       <!--搜索与添加区域-->
       <el-row :gutter="20">
         <el-col :span="4">
-          <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.queryParam" >
+            <template slot="append">
+              <el-button  icon="el-icon-search" @click="getUserLessonRecordList()"></el-button>
+            </template>
           </el-input>
         </el-col>
         <el-col :span="2">
@@ -33,7 +35,7 @@
             {{scope.row.lessonType == 1 ? "成人集体" : (scope.row.lessonType == 2 ? "少儿集体" : (scope.row.lessonType == 3 ? "vip小课" : ""))}}
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" :formatter="dateTimeFormat" prop="createTime" align="center"></el-table-column>
+        <el-table-column label="创建时间" :formatter="dateTimeFormat2"  prop="createTime" align="center"></el-table-column>
         
         <el-table-column label="操作" width="185px" align="center">
           <template slot-scope="scope">
@@ -111,10 +113,10 @@
             </el-select>
           </el-form-item> 
           <el-form-item label="上课时间" prop="attendClassStartTime" label-width="100px">
-           <el-date-picker v-model="editForm.attendClassStartTime" type="datetime" placeholder="选择日期"></el-date-picker> 
+           <el-date-picker v-model="editForm.attendClassStartTime" type="datetime" placeholder="选择日期" format="yyyy-MM-dd HH:mm"></el-date-picker> 
           </el-form-item>
           <el-form-item label="下课时间" prop="attendClassEndTime" label-width="100px" >
-           <el-date-picker v-model="editForm.attendClassEndTime" type="datetime" placeholder="选择日期"></el-date-picker>
+           <el-date-picker v-model="editForm.attendClassEndTime" type="datetime" placeholder="选择日期" format="yyyy-MM-dd HH:mm"></el-date-picker>
           </el-form-item>
           <el-form-item label="课时数" prop="usedLessons" label-width="100px">
             <el-col :span="6">
@@ -146,7 +148,7 @@
       return {
         // 获取用户列表的参数对象
         queryInfo: {
-          // query: '',
+          queryParam: "",
           pageId: 1,
           pageSize: 10
         },
@@ -212,6 +214,14 @@
           return ''
         }
         return this.$moment(date).format('YYYY-MM-DD HH:mm')
+      },
+      // 日期时间格式化
+      dateTimeFormat2: function (row, column) {
+        var date = row[column.property] 
+        if (date === undefined || date == null) {
+          return ''
+        }
+        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
       // 日期格式化
       dateFormat: function (row, column) {
@@ -333,6 +343,9 @@
       }, 
       // 修改用户上课记录
       editClassRecordInfo(editForm){ 
+        editForm.attendClassStartTime = this.$moment(editForm.attendClassStartTime).format('YYYY-MM-DD HH:mm:ss'); 
+        editForm.attendClassEndTime = this.$moment(editForm.attendClassEndTime).format('YYYY-MM-DD HH:mm:ss'); 
+
         this.$refs.editFormRef.validate(async valid => { 
           if (!valid) return   
           Service.editClassRecordInfo(editForm).then((res)=>{ 
