@@ -25,7 +25,7 @@
 
       <!--用户列表区域-->
       <el-table :data="userList" border stripe>
-        <el-table-column label="#" type="index"></el-table-column>
+        <!-- <el-table-column label="#" type="index"></el-table-column> -->
         <el-table-column label="用户编号" prop="userCode" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column label="名称" prop="name"  align="center"></el-table-column>
         <el-table-column label="性别"  align="center">

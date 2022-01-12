@@ -25,7 +25,7 @@
 
       <!--用户课卡列表区域-->
       <el-table :data="userLessonCardList" border stripe>
-        <el-table-column label="#" type="index"></el-table-column>
+        <!-- <el-table-column label="#" type="index"></el-table-column> -->
         <el-table-column label="课卡编号" prop="lessonCardCode" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column label="用户名称" prop="userName" align="center"></el-table-column> 
         <el-table-column label="课程类型"  align="center">

@@ -25,7 +25,7 @@
 
       <!--用户列表区域-->
       <el-table :data="userList" border stripe>
-        <el-table-column label="#" type="index"></el-table-column>
+        <!-- <el-table-column label="#" type="index"></el-table-column> -->
         <el-table-column label="用户名称" prop="userName" align="center"></el-table-column>
         <el-table-column label="上课时间" prop="attendClassStartTime" :formatter="dateTimeFormat"  align="center"></el-table-column>
         <el-table-column label="下课时间" prop="attendClassEndTime" :formatter="dateTimeFormat" align="center"></el-table-column>
@@ -43,10 +43,12 @@
             <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row)"></el-button>
             <!--删除按钮-->
             <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <!--复制按钮-->
+            <el-button type="warning" icon="el-icon-document-copy" size="mini" @click="showCopyDialog(scope.row)"></el-button>
             <!--分配角色按钮-->
-            <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+            <!-- <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
               <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -77,10 +79,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="上课时间" prop="attendClassStartTime" label-width="100px">
-           <el-date-picker v-model="addForm.attendClassStartTime" type="datetime" placeholder="选择日期"></el-date-picker> 
+           <el-date-picker v-model="addForm.attendClassStartTime" type="datetime" placeholder="选择日期"  format="yyyy-MM-dd HH:mm"></el-date-picker> 
           </el-form-item>
           <el-form-item label="下课时间" prop="attendClassEndTime" label-width="100px" >
-           <el-date-picker v-model="addForm.attendClassEndTime" type="datetime" placeholder="选择日期"></el-date-picker>
+           <el-date-picker v-model="addForm.attendClassEndTime" type="datetime" placeholder="选择日期"  format="yyyy-MM-dd HH:mm"></el-date-picker>
           </el-form-item>
           <el-form-item label="课时数" prop="usedLessons" label-width="100px">
             <el-col :span="5">
@@ -135,6 +137,42 @@
         </span>
       </el-dialog>
 
+      <!--复制 用户信息对话框-->
+      <el-dialog title="复制用户信息" :visible.sync="copyDialogVisible" width="40%" >
+        <!--内容主题区-->
+        <el-form :model="addForm" ref="addFormRef" label-width="70px">
+          <el-form-item label="请选择用户" label-width="100px">
+            <el-select v-model="addForm.userName" filterable remote :remote-method="addDialogClick" @change="addSelectChange"
+             placeholder="请输入关键词" :loading="loading">
+              <el-option v-for="item in userinfo_list" :key="item.id" :label="item.name"
+              :value="item.id" ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="上课时间" prop="attendClassStartTime" label-width="100px">
+           <el-date-picker v-model="addForm.attendClassStartTime" type="datetime" placeholder="选择日期"  format="yyyy-MM-dd HH:mm"></el-date-picker> 
+          </el-form-item>
+          <el-form-item label="下课时间" prop="attendClassEndTime" label-width="100px" >
+           <el-date-picker v-model="addForm.attendClassEndTime" type="datetime" placeholder="选择日期"  format="yyyy-MM-dd HH:mm"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="课时数" prop="usedLessons" label-width="100px">
+            <el-col :span="5">
+              <el-input v-model="addForm.usedLessons"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="课程类型" prop="lessonType" label-width="100px">
+            <el-select v-model="addForm.lessonType" placeholder="请选择">
+              <el-option v-for="item in lesson_type" :key="item.value" :label="item.label" :value="item.value" ></el-option>
+            </el-select>
+          </el-form-item>  
+        </el-form>
+        
+        <!--底部区域-->
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="copyDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addUserClassRecord(addForm)">确 定</el-button>
+          </span>
+      </el-dialog>
+
     </el-card>
   </div>
 </template>
@@ -156,6 +194,8 @@
         total: 0,
         // 控制添加用户对话框的显示与隐藏
         addDialogVisible: false,
+        // 控制复制对话框的显示与隐藏
+        copyDialogVisible: false,
         // 添加用户的表单数据
         addForm: {
           userId: '',
@@ -251,8 +291,7 @@
       //     this.getUserLessonRecordList()
       //   })
       //  },
-      addUserClassRecord(addForm){
-        console.log(addForm)
+      addUserClassRecord(addForm){   
         this.$refs.addFormRef.validate(async valid => {
           if (!valid) return 
           let userInfo = {}
@@ -265,6 +304,7 @@
           Service.addUserClassRecord(addForm).then((res)=>{
             if (res.code !== 0) return this.$message.error(res.msg)
             this.addDialogVisible = false
+            this.copyDialogVisible = false
             this.$message.success('添加成功!')
             // 重新获取课堂记录信息
             this.getUserLessonRecordList()
@@ -274,13 +314,14 @@
 
       // 失焦查询用户信息
       async addDialogClick(query) {
-        this.addDialogVisible = true
+        // this.addDialogVisible = true
         if(query !== ''){
           // 发起获取用户课卡信息的数据请求
           const {data: res} = await this.$http.post('yl/user/getUserListByName', qs.stringify({
             userName: query
           }))
           if (res.code !== 0) return this.$message.error(res.msg)
+          // console.log(res.data  )
           this.userinfo_list = res.data  
           // this.$set(this.addForm,'userId',this.userinfo_list[0].id)
           // this.$set(this.addForm,'userName',this.userinfo_list[0].name)
@@ -301,7 +342,7 @@
 
 
       // 展示编辑课堂记录的对话框
-      async showEditDialog(row) {
+      async showEditDialog(row) { 
         const {data: res} = await this.$http.post('yl/userLessonRecord/getUserLessonRecord', qs.stringify({
           id: row.id
         })) 
@@ -310,6 +351,17 @@
         // res.data.attendClassEndTime = this.$moment(res.data.attendClassEndTime).format('YYYY-MM-DD HH:mm:ss');
         this.editForm = res.data  
         this.editDialogVisible = true
+      },
+
+      // 复制-展示课堂记录的对话框
+      async showCopyDialog(row) {
+        // 1.获取用户数据
+        const {data: res} = await this.$http.post('yl/userLessonRecord/getUserLessonRecord', qs.stringify({
+          id: row.id
+        })) 
+        if (res.code !== 0) return this.$message.error(res.msg) 
+        this.addForm = res.data  
+        this.copyDialogVisible = true
       },
 
       // 监听修改用户对话框的关闭事件
