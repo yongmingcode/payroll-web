@@ -204,7 +204,7 @@
       clickSearch(){
         this.queryInfo.pageId = 1
         this.queryInfo.pageSize = 10
-        this.getUserLessonRecordList()
+        this.getUserLessonCardList()
       },
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {
