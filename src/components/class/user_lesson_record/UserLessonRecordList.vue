@@ -14,7 +14,7 @@
         <el-col :span="4">
           <el-input placeholder="请输入内容" v-model="queryInfo.queryParam" >
             <template slot="append">
-              <el-button  icon="el-icon-search" @click="getUserLessonRecordList()"></el-button>
+              <el-button  icon="el-icon-search" @click="clickSearch()"></el-button>
             </template>
           </el-input>
         </el-col>
@@ -236,6 +236,12 @@
           this.userList = res.data.data
           this.total = res.data.totalCount
         })
+      },
+      // 监听搜索按钮
+      clickSearch(){
+        this.queryInfo.pageId = 1
+        this.queryInfo.pageSize = 10
+        this.getUserLessonRecordList()
       },
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {

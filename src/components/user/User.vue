@@ -14,7 +14,7 @@
         <el-col :span="4">
           <el-input placeholder="请输入内容" v-model="queryInfo.userName" >
             <template slot="append">
-              <el-button  icon="el-icon-search" @click="getUserList()"></el-button>
+              <el-button  icon="el-icon-search" @click="clickSearch()"></el-button>
             </template>
           </el-input>
         </el-col>
@@ -226,13 +226,19 @@
     },
     methods: {
       async getUserList() {
-        console.log(this.queryInfo)
+        
         const {data: res} = await this.$http.get('yl/user/getUserList', {
           params: this.queryInfo
         })
         if (res.code !== 0) return this.$message.error('获取用户信息失败！')
         this.userList = res.data.data
         this.total = res.data.totalCount
+      },
+      // 监听搜索按钮
+      clickSearch(){
+        this.queryInfo.pageId = 1
+        this.queryInfo.pageSize = 10
+        this.getUserList()
       },
       // 监听 pagesize 改变的事件
       handleSizeChange(newSize) {
